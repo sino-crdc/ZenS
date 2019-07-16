@@ -12,7 +12,6 @@
 #include "Order.h"
 #include <stdlib.h>
 
-//todo: macro->Setting
 class Gest_Data;
 class Order;
 class Gest_Quantity_Data: public Gest_Data{

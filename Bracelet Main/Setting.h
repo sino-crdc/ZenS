@@ -14,13 +14,23 @@
 
 #define QUANTITY_AXE 'x'
 
-#define SD_PIN 4
-#define BUTTONA_PIN 10
-#define BUTTONB_PIN 11
-#define BUTTONC_PIN 12
-#define BUTTOND_PIN 13
-#define GEST_RX_PIN 8
-#define GEST_TX_PIN 9
+#define SD_PIN 53
+
+#define RAY_PIN 3
+
+#define BUTTONA_PIN 29
+#define BUTTONB_PIN 30
+#define BUTTONC_PIN 31
+#define BUTTOND_PIN 32
+
+#define GEST_RX_PIN 9
+#define GEST_TX_PIN 10
+
+
+#define LEDA_PIN 46
+#define LEDB_PIN 47
+#define LEDC_PIN 48
+#define LEDD_PIN 49 
 
 typedef struct{
   unsigned int buf[243];

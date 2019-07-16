@@ -6,8 +6,8 @@
 #include "WProgram.h"
 #endif
 
-#include "Order.h"
 #include "Setting.h"
+#include "Order.h"
 #include <IRremote.h>
 
 class Controler {

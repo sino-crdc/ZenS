@@ -7,10 +7,10 @@
 #endif
 
 #include <SD.h>
+#include "Setting.h"
 #include "Device.h"
 #include "Gest_Quantity_Data.h"
 #include "Order.h"
-#include "Setting.h"
 #include "Controler.h"
 #include <math.h>
 #include <SoftwareSerial.h>
