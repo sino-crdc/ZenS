@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$/Bracelet Main" />
+    </sourceRoots>
+    <excludeRoots>
+      <file path="$PROJECT_DIR$/Bracelet Main/ZenS" />
+      <file path="$PROJECT_DIR$/管理" />
+      <file path="$PROJECT_DIR$/经费与组织" />
+    </excludeRoots>
+  </component>
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
+</project>
