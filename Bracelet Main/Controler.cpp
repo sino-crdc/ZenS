@@ -23,6 +23,10 @@ static bool buttonD = false;
 void Controler::setButtonA(bool state)
 {
   buttonA = state;
+  byte stay = state ? 100 : 50;
+  digitalWrite(LEDA_PIN,HIGH);
+  delay(stay);
+  digitalWrite(LEDA_PIN,LOW);
 }
 void Controler::setButtonB(bool state)
 {

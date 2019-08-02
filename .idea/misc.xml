@@ -4,9 +4,10 @@
   <component name="CidrRootsConfiguration">
     <sourceRoots>
       <file path="$PROJECT_DIR$/Bracelet Main" />
+      <file path="$PROJECT_DIR$/IRrecord" />
     </sourceRoots>
     <excludeRoots>
-      <file path="$PROJECT_DIR$/Bracelet Main/ZenS" />
+      <file path="$PROJECT_DIR$/Bracelet Main/Bracelet Main" />
       <file path="$PROJECT_DIR$/管理" />
       <file path="$PROJECT_DIR$/经费与组织" />
     </excludeRoots>

@@ -7,10 +7,10 @@
 #endif
 #include <SD.h>
 
-#define AC_ORDER_NUM 200
-#define LIGHT_ORDER_NUM 50
-#define TELE_ORDER_NUM 500
-#define CURTAIN_ORDER_NUM 20
+#define AC_ORDER_NUM 50
+#define LIGHT_ORDER_NUM 10
+#define TELE_ORDER_NUM 300
+#define CURTAIN_ORDER_NUM 5
 
 #define QUANTITY_AXE 'x'
 
