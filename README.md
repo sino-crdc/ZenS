@@ -8,6 +8,7 @@ Multi-function bracelet terminal based on gesture recognition.
 ### 目录
 - .idea: CLion的一些配置文件以及VCS的配置
 - Bracelet Main: 手环主体程序
+- IRrecord: 红外编码收集器
 - Model_Physics: 物理模型
 - Model_UML: UML模型
 - Papers: 项目参考的论文
