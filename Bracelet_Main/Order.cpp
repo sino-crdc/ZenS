@@ -6,13 +6,6 @@
 
 #include "Order.h"
 
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(x) sizeof(x)/sizeof(x[0])
-#endif
-
-unsigned char by_coding_o[972];
-unsigned int int_coding_o[243];
-
 Order::Order(Device* device, String orderType)
 {
   this->device = device;
@@ -54,18 +47,20 @@ void Order::setCode()
           if (data.equals(this->orderType)) { //如果匹配成功，加载code并退出
             file.read();//丢弃'#'
 
+            char* by_coding_o = new char[972];
             for (int j = 0; char(file.peek()) != '#'; j++) {
               by_coding_o[j] = char(file.read());
             }
 
-            byteTointArray(by_coding_o,int_coding_o);
+            int* int_coding_o = (int*)by_coding_o;
             
             for(int j = 0;j < 243; j++){
               this->coding.buf[j] = int_coding_o[j];
             }
             
-            this->coding.len = ARRAY_SIZE(int_coding_o);
+            this->coding.len = 243;
             this->coding.hz = 38;
+            delete [] by_coding_o;
             break;
           } else { //如果匹配失败，则继续读到\n后
             while (file.available() && char(file.read()) != '\n');
@@ -99,9 +94,4 @@ Code Order::getCode()
 bool Order::getIsQuantity()
 {
   return this->isQuantity;
-}
-void Order::byteTointArray(char* bytes,int* ints){
-  for(int i = 3; i<sizeof(int)*243; i+=4){
-     ints[(i+1)/4-1] = int(bytes[i-3]<<12 | bytes[i-2]<<8 | bytes[i-1]<<4 | bytes[i]);
-  }
 }

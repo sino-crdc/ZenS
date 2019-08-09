@@ -11,32 +11,28 @@
 #include <IRremote.h>
 
 class Controler {
-//  private:
-//    static bool buttonA;
-//    static bool buttonB;
-//    static bool buttonC;
-//    static bool buttonD;
+  private:
+    bool buttonA = false;
+    bool buttonB = false;
+    bool buttonC = false;
+    bool buttonD = false;
   
   public:
-    static void setButtonA(bool state);
-    static void setButtonB(bool state);
-    static void setButtonC(bool state);
-    static void setButtonD(bool state);
-    static bool getButtonA();
-    static bool getButtonB();
-    static bool getButtonC();
-    static bool getButtonD();
-    static void initial();
-    static bool isPressing();
-    static Device* device();
-    static void send(Order* order);
-    static void terminate();
-    static byte detect();
+    Controler();
+    void setButtonA(bool state);
+    void setButtonB(bool state);
+    void setButtonC(bool state);
+    void setButtonD(bool state);
+    bool getButtonA();
+    bool getButtonB();
+    bool getButtonC();
+    bool getButtonD();
+    void initial();
+    bool isPressing();
+    Device* device();
+    void send(Order* order);
+    void terminate();
+    byte detect();
 };
-
-//bool Controler::buttonA = false;
-//bool Controler::buttonB = false;
-//bool Controler::buttonC = false;
-//bool Controler::buttonD = false;
 
 #endif
