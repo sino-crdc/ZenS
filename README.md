@@ -14,6 +14,6 @@ Multi-function bracelet terminal based on gesture recognition.
 - Papers: 项目参考的论文
 - Schematic: 原理图(PCB\\电路图\\Datasheet)
 - Sotuion: 项目的方案性文件
-- CMakeLists.txt: CMake编译工具脚本文件
+- CMakeLists.txt: CMakeg构建脚本(暂时没用)
 
 ![Notion Image](https://images.pexels.com/photos/1250281/pexels-photo-1250281.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500)
