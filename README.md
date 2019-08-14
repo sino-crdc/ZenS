@@ -16,4 +16,5 @@ Multi-function bracelet terminal based on gesture recognition.
 - Sotuion: 项目的方案性文件
 - CMakeLists.txt: CMakeg构建脚本(暂时没用)
 
-![Notion Image](https://images.pexels.com/photos/1250281/pexels-photo-1250281.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500)
+![Notion Image0](https://github.com/sino-crdc/ZenS/blob/master/Model_Physics/%E6%A8%A1%E5%9E%8B%E4%B8%80%20%20(2).jpg?raw=true)
+![Notion Image1](https://github.com/sino-crdc/ZenS/blob/master/Model_Physics/%E6%A8%A1%E5%9E%8B%E4%B8%80%20%20(3).jpg?raw=true)
