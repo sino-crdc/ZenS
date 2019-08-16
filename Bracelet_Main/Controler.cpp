@@ -16,10 +16,6 @@ Controler::Controler(){}
 void Controler::setButtonA(bool state)
 {
   buttonA = state;
-  byte stay = state ? 100 : 50;
-  digitalWrite(LEDA_PIN,HIGH);
-  delay(stay);
-  digitalWrite(LEDA_PIN,LOW);
 }
 void Controler::setButtonB(bool state)
 {
@@ -84,7 +80,7 @@ void Controler::terminate()
 }
 bool Controler::isPressing()
 {
-  detect();
+  Controler::detect();
   if (buttonA || buttonB || buttonC || buttonD)
     return true;
   else
@@ -94,7 +90,6 @@ byte Controler::detect(){
   if (digitalRead(BUTTONA_PIN) == HIGH) {
     setButtonA(true);
     digitalWrite(LEDA_PIN,HIGH);
-//    Serial1.print("A pushed.");
     return 1;
   }
   else{
