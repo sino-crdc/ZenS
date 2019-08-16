@@ -14,22 +14,27 @@ Device::Device(String name, IRsend irsend, File infos,int orderNum){
 }
 
 String Device::getName(){
+  Serial.println("Device::getname");
   return this->name;
 }
 
 IRsend Device::getIrsend(){
+  Serial.println("Device::getIrsend");
   return this->irsend;
 }
 
 File Device::getInfos(){
+  Serial.println("Device::getInfos");
   return this->infos;
 }
 
 int Device::getOrderNum(){
+  Serial.println("Device::getOrderNum");
   return this->orderNum;
 }
 
 String* Device::getOrderTypes(){
+  Serial.println("Device::getOrderTypes");
   if(this->orderTypes == NULL){
     complete();
   }
@@ -37,6 +42,7 @@ String* Device::getOrderTypes(){
 }
 
 Code* Device::getCodings(){
+  Serial.println("Device::getCodings");
   if(this->codings == NULL){
     complete();
   }
@@ -44,6 +50,7 @@ Code* Device::getCodings(){
 }
 
 Gest_Data* Device::getGestures(){
+  Serial.println("Device::getGestures");
   if(this->gestures == NULL){
     complete();
   }
@@ -51,6 +58,7 @@ Gest_Data* Device::getGestures(){
 }
 
 void Device::complete(){
+  Serial.println("Device::complete");
   if(SD.begin(SD_PIN)){
     if(SD.open(this->infos.name(),FILE_READ)){
       const int num = this->orderNum;
@@ -95,5 +103,6 @@ void Device::complete(){
       }
     }
     this->infos.close();
+    Serial.println("Device::complete finish");
   }
 }

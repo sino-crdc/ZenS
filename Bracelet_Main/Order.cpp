@@ -14,14 +14,17 @@ Order::Order(Device* device, String orderType)
 }
 void Order::setDevice(Device* device)
 {
+  Serial.println("Order::setDevice");
   this->device = device;
 }
 void Order::setOrderType(String orderType)
 {
+  Serial.println("Order::setOrderType");
   this->orderType = orderType;
 }
 void Order::setCode()
 {
+  Serial.println("Order::setCode");
   if (this->isQuantity) {
     Code* codings = this->device->getCodings();
     String* orderTypes = this->device->getOrderTypes();
@@ -32,6 +35,7 @@ void Order::setCode()
         break;
       }
     }
+    Serial.println("Order::setCode isQuantity finish");
   } else {
     if (SD.begin(SD_PIN)) {
       File file = SD.open(this->device->getInfos().name(),FILE_READ);
@@ -68,11 +72,13 @@ void Order::setCode()
         }
       }
       file.close();
+      Serial.println("Order::setCode not isQuantity finish");
     }
   }
 }
 void Order::setIsQuantity()
-{
+{  
+  Serial.println("Order::setIsQuantity");
   if (this->orderType.charAt(0) == '$')
     this->isQuantity = true;
   else
@@ -80,18 +86,22 @@ void Order::setIsQuantity()
 }
 Device* Order::getDevice()
 {
+  Serial.println("Order::getDevice");
   return this->device;
 }
 String Order::getOrderType()
 {
+  Serial.println("Order::getOrderType "+orderType);
   return this->orderType;
 }
 Code Order::getCode()
 {
+  Serial.println("Order::getCode");
   setCode();
   return this->coding;
 }
 bool Order::getIsQuantity()
 {
+  Serial.println("Order::getIsQuantity "+isQuantity);
   return this->isQuantity;
 }

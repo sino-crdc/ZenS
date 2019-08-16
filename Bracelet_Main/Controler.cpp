@@ -88,6 +88,7 @@ bool Controler::isPressing()
 }
 byte Controler::detect(){
   if (digitalRead(BUTTONA_PIN) == HIGH) {
+    //Serial.println("A");
     setButtonA(true);
     digitalWrite(LEDA_PIN,HIGH);
     return 1;
@@ -98,22 +99,28 @@ byte Controler::detect(){
   }
     
   if (digitalRead(BUTTONB_PIN) == HIGH) {
+    //Serial.println("B");
     setButtonB(true);
     return 2;
   }
   else
     setButtonB(false);
-  if (digitalRead(BUTTONC_PIN == HIGH)) {
+  
+  if (digitalRead(BUTTONC_PIN) == HIGH) {
+    //Serial.println("C");
     setButtonC(true);
     return 3;
   }
   else
     setButtonC(false);
-  if (digitalRead(BUTTOND_PIN == HIGH)) {
+    
+  if (digitalRead(BUTTOND_PIN) == HIGH) {
+    //Serial.println("D");
     setButtonD(true);
     return 4;
   }
   else
     setButtonD(false);
-    return 0;
+  
+  return 0;
 }
