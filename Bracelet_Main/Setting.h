@@ -9,7 +9,7 @@
 
 #define AC_ORDER_NUM 50
 #define LIGHT_ORDER_NUM 10
-#define TELE_ORDER_NUM 300
+#define TELE_ORDER_NUM 200 //这个占用了300KB的动态内存，可以过更改数量为50或者40，如果存在ROM中，减少到250以内(250爆满)
 #define CURTAIN_ORDER_NUM 5
 
 #define QUANTITY_AXE 'x'

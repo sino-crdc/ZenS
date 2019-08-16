@@ -15,30 +15,33 @@
 #define ABSOLU_ANGLE0 0.0//初始绝对角度
 #define WTHRESHOLD 50.0//角速度最大有效值
 
-static SoftwareSerial serial = SoftwareSerial(GEST_RX_PIN, GEST_TX_PIN);
+extern Controler controler;
 
 //todo a w angle 的类型
-unsigned char Re_buf[11], counter = 0;
-unsigned char sign = 0;
-bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
-bool qfirst = true;
-float a[3], w[3], angle[3];
+static unsigned char Re_buf[11], counter = 0;
+static unsigned char sign = 0;
+static bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
+static bool qfirst = true;
+static float a[3], w[3], angle[3];
+
+//Arduino对基于对象的支持不是很好，private static 变量，声明时不可初始化挺正常，但是异文件类外定义竟然与private冲突，指定作用域也不行；同文件类外定义竟然还多重定义而不行！于是拉出
+static SoftwareSerial sserial = SoftwareSerial(GEST_RX_PIN, GEST_TX_PIN);
 
 Gesture::Gesture(Device* device) {
   this->device = device;
 }
 
 void Gesture::initial() {
-  serial.begin(115200);
-  serial.write(0xFF);
-  serial.write(0xAA);
-  serial.write(0x61);
-  serial.write(0xFF);
-  serial.write(0xAA);
-  serial.write(0x63);
-  serial.write(0xFF);
-  serial.write(0xAA);
-  serial.write(0x66);
+  sserial.begin(115200);
+  sserial.write(0xFF);
+  sserial.write(0xAA);
+  sserial.write(0x61);
+  sserial.write(0xFF);
+  sserial.write(0xAA);
+  sserial.write(0x63);
+  sserial.write(0xFF);
+  sserial.write(0xAA);
+  sserial.write(0x66);
 }
 
 void Gesture::setGest_data(Gest_Data* gest_data) {
@@ -51,7 +54,7 @@ Gest_Data* Gesture::getGest_data() {
 
 Gest_Data* Gesture::detect() {
   String equation = "";
-  while (Controler::isPressing()) {
+  while (controler.isPressing()) {
     
     //获取数据
     serialEvent();
@@ -161,7 +164,7 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
 }
 
 Gest_Quantity_Data* Gesture::quantity_detect(Order* order) { 
-  while (Controler::isPressing()) {
+  while (controler.isPressing()) {
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
@@ -248,11 +251,11 @@ Order* Gesture::quantity_analyze(Gest_Quantity_Data* gest_quantity_data) {
 }
 
 void Gesture::serialEvent() {
-  while (serial.available()) {
+  while (sserial.available()) {
 
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
 
-    Re_buf[counter] = (unsigned char)serial.read();
+    Re_buf[counter] = (unsigned char)sserial.read();
     if (counter == 0 && Re_buf[0] != 0x55) return; //第0号数据不是帧头
     counter++;
     if (counter == 11)          //接收到11个数据

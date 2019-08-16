@@ -6,27 +6,16 @@
 
 #include "Controler.h"
 
-/*
- * 这些变量无法在类体中定义，只能在类体中声明，类外定义
- * 但是这样的话会出现multiple definition的问题
- * 因为编译器会将Controler相关的.cpp文件和.h文件中所有的类外赋值(包括.cpp中定义的函数)当作定义
- * 这是编译器的固有问题
- * 因此一个解决方法是，不在类体中声明，这样编译器就不会要求“类外定义”，因为本来就在类外
- * 于是，类外声明的静态变量，可以在类外初始化定义，也可以在类外定义的函数中去赋值
- * 不过，仍然在类体中用注释标记出这些变量以增强可读性
- */
-static bool buttonA = false;
-static bool buttonB = false;
-static bool buttonC = false;
-static bool buttonD = false;
+extern Device air_conditioner;
+extern Device light;
+extern Device television;
+extern Device curtain;
+
+Controler::Controler(){}
 
 void Controler::setButtonA(bool state)
 {
   buttonA = state;
-  byte stay = state ? 100 : 50;
-  digitalWrite(LEDA_PIN,HIGH);
-  delay(stay);
-  digitalWrite(LEDA_PIN,LOW);
 }
 void Controler::setButtonB(bool state)
 {
@@ -91,7 +80,7 @@ void Controler::terminate()
 }
 bool Controler::isPressing()
 {
-  detect();
+  Controler::detect();
   if (buttonA || buttonB || buttonC || buttonD)
     return true;
   else
@@ -100,10 +89,14 @@ bool Controler::isPressing()
 byte Controler::detect(){
   if (digitalRead(BUTTONA_PIN) == HIGH) {
     setButtonA(true);
+    digitalWrite(LEDA_PIN,HIGH);
     return 1;
   }
-  else
+  else{
     setButtonA(false);
+    digitalWrite(LEDA_PIN,LOW);
+  }
+    
   if (digitalRead(BUTTONB_PIN) == HIGH) {
     setButtonB(true);
     return 2;

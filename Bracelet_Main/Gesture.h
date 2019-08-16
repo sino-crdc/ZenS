@@ -29,7 +29,8 @@ class Gesture{
   private:
     Device* device;
     Gest_Data* gest_data = NULL;
-
+    
     void serialEvent(); 
 };
+
 #endif

@@ -26,7 +26,5 @@ class Order {
     String orderType;
     Code coding;
     bool isQuantity;
-
-    void byteTointArray(char* bytes,int* ints);
 };
 #endif
