@@ -12,7 +12,8 @@ class Gest_Data {
   public:
     String equation;
     Device *device;
-    
+
+    Gest_Data(){this->equation = "";this->device = NULL;};
     Gest_Data(String equation, Device* device);
 };
 
