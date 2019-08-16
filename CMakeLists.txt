@@ -18,4 +18,8 @@ add_executable(ZenS
         "Bracelet Main/Gesture.h"
         "Bracelet Main/Order.cpp"
         "Bracelet Main/Order.h"
+<<<<<<< HEAD
+        "Bracelet Main/Setting.h" Bracelet_Main/helloworld.cpp)
+=======
         "Bracelet Main/Setting.h")
+>>>>>>> 71f2f733c9af014b43d4987d8e79de4dde1f397d

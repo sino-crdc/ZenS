@@ -21,6 +21,7 @@ Device curtain = Device("Curtain", IRsend(), File(SdFile(), "Curtain.infos"), CU
 
 //todo: 关于struct的指针化，String的问题(string、String.h)
 void setup() {
+  Serial.begin(9600);
   controler.initial();
   Gesture::initial();
   pinMode(BUTTONA_PIN, INPUT);
@@ -36,6 +37,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("loop begin");
   byte pin0 = controler.detect();//第一次按下的按键
   if (controler.isPressing()) {
     Serial.println("in the work body.");
@@ -50,22 +52,26 @@ void loop() {
     Gesture gesture = Gesture(device);
     Order* order = gesture.analyze(gesture.detect());
     if (order != NULL) {
+      Serial.println("order is not NULL");
       if (!order->getIsQuantity()) {
         controler.send(order);
-      } else {
+        Serial.println("order not isQuantity finish");
+      }else{
         unsigned long time0 = millis();//开始计时
         while (millis() - time0 < 10000L) { //小于十秒
 
           bool fly = false;//用于后续嵌套循环的双跳
 
           byte pin1 = controler.detect();
-          if (controler.isPressing() && pin1 == pin0) { //如果按键按下并且是相同设备
+          Serial.println("pin1 detect: "+pin1);
+          if(controler.isPressing() && pin1 == pin0){//如果按键按下并且是相同设备
             Device* device_now = controler.device();
             Gesture gesture0 = Gesture(device_now);
             do {
               controler.send(gesture0.quantity_analyze(gesture0.quantity_detect(order)));
               byte pin1 = controler.detect();
-              if (!(controler.isPressing() && pin1 == pin0)) {
+              Serial.println("pin1 detect: "+pin1);
+              if(!(controler.isPressing() && pin1 == pin0)){
                 fly = true;//“要跳出去啦啦啦~”
                 break;//跳出内层
               }
@@ -79,6 +85,7 @@ void loop() {
             break;//跳出外层
           }
         }
+        Serial.println("order isQuantity finish");
       }
     }
     controler.terminate();
