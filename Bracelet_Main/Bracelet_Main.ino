@@ -3,13 +3,14 @@
 #else
 #include "WProgram.h"
 #endif
+
+#include "Setting.h"
 #include <IRremote.h>
 #include <SD.h>
-#include "Controler.h"
 #include "Device.h"
 #include "Gesture.h"
 #include "Order.h"
-#include "Setting.h"
+#include "Controler.h"
 
 Controler controler;
 
@@ -37,10 +38,14 @@ void setup() {
 void loop() {
   byte pin0 = controler.detect();//第一次按下的按键
   if (controler.isPressing()) {
-    Serial.print("((((((((((((((((");
+    Serial.println("in the work body.");
     Device* device = controler.device();
     if (device == NULL) {
+      Serial.println("device == NULL");
       return;
+    }
+    if(device != NULL){
+      Serial.println("device gotten.");
     }
     Gesture gesture = Gesture(device);
     Order* order = gesture.analyze(gesture.detect());

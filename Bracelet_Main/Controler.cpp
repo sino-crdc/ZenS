@@ -11,12 +11,12 @@ extern Device light;
 extern Device television;
 extern Device curtain;
 
-Controler::Controler() {}
+Controler::Controler() {Serial.println("controler constructed.");}
 
 void Controler::setButtonA(bool state)
 {
   buttonA = state;
-  Serial.print(buttonA);
+  Serial.println("buttonA == " + buttonA);
 }
 void Controler::setButtonB(bool state)
 {
@@ -48,16 +48,22 @@ bool Controler::getButtonD()
 }
 void Controler::initial()
 {
+  Serial.println("controler initializing...");
   buttonA = false;
   buttonB = false;
   buttonC = false;
   buttonD = false;
+  Serial.println("controler initialized.");
 }
 Device* Controler::device()
 {
+  Serial.println("device searching...");
   Device* device = NULL;
-  if (buttonA)
+  Serial.println("device == NULL");
+  if (buttonA){
     device = &air_conditioner;
+    Serial.println("device == air_conditioner");
+  }
   else if (buttonB)
     device = &light;
   else if (buttonC)
@@ -68,32 +74,43 @@ Device* Controler::device()
 }
 void Controler::send(Order* order)
 {
-  if (order != NULL)
+  Serial.println("order sending...");
+  if (order != NULL) {
+    Serial.print("order sent: ");
+    Serial.println("device^"+order->getDevice()->getName() + " ordertype^"+order->getOrderType());
     order->getDevice()->getIrsend().sendRaw(order->getCode().buf, order->getCode().len, order->getCode().hz);
+  } else {
+    Serial.println("order == NULL");
+  }
 }
 void Controler::terminate()
 {
+  Serial.println("controler terminating...");
   buttonA = false;
   buttonB = false;
   buttonC = false;
   buttonD = false;
   //todo: C++垃圾回收机制
+  Serial.println("controler terminated.");
 }
 bool Controler::isPressing()
 {
   Controler::detect();
   if (buttonA || buttonB || buttonC || buttonD) {
+    Serial.println("pressing.");
     return true;
-    Serial.print("*************");
   }
-  else
+  else {
+    Serial.println("not pressing.");
     return false;
+  }
 }
 byte Controler::detect() {
+  Serial.println("detecting...");
   if (digitalRead(BUTTONA_PIN) == HIGH) {
     setButtonA(true);
     digitalWrite(LEDA_PIN, HIGH);
-    Serial.print("ledA==HIGH");
+    Serial.println("ledA == HIGH");
     return 1;
   }
   else {
@@ -107,7 +124,7 @@ byte Controler::detect() {
   }
   else
     setButtonB(false);
-  if (digitalRead(BUTTONC_PIN == HIGH)) {
+  if (digitalRead(BUTTONC_PIN) == HIGH) {
     setButtonC(true);
     return 3;
   }
