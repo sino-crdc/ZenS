@@ -11,11 +11,12 @@ extern Device light;
 extern Device television;
 extern Device curtain;
 
-Controler::Controler(){}
+Controler::Controler() {}
 
 void Controler::setButtonA(bool state)
 {
   buttonA = state;
+  Serial.print(buttonA);
 }
 void Controler::setButtonB(bool state)
 {
@@ -81,22 +82,25 @@ void Controler::terminate()
 bool Controler::isPressing()
 {
   Controler::detect();
-  if (buttonA || buttonB || buttonC || buttonD)
+  if (buttonA || buttonB || buttonC || buttonD) {
     return true;
+    Serial.print("*************");
+  }
   else
     return false;
 }
-byte Controler::detect(){
+byte Controler::detect() {
   if (digitalRead(BUTTONA_PIN) == HIGH) {
     setButtonA(true);
-    digitalWrite(LEDA_PIN,HIGH);
+    digitalWrite(LEDA_PIN, HIGH);
+    Serial.print("ledA==HIGH");
     return 1;
   }
-  else{
+  else {
     setButtonA(false);
-    digitalWrite(LEDA_PIN,LOW);
+    digitalWrite(LEDA_PIN, LOW);
   }
-    
+
   if (digitalRead(BUTTONB_PIN) == HIGH) {
     setButtonB(true);
     return 2;
@@ -115,5 +119,5 @@ byte Controler::detect(){
   }
   else
     setButtonD(false);
-    return 0;
+  return 0;
 }
