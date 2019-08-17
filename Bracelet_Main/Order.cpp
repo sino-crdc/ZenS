@@ -72,7 +72,7 @@ void Order::setCode()
   }
 }
 void Order::setIsQuantity()
-{
+{  
   if (this->orderType.charAt(0) == '$')
     this->isQuantity = true;
   else

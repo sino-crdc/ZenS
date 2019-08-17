@@ -20,12 +20,13 @@ extern Controler controler;
 //todo a w angle 的类型
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
+static unsigned char wait = 50;
 static bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
 static bool qfirst = true;
 static float a[3], w[3], angle[3];
 
 //Arduino对基于对象的支持不是很好，private static 变量，声明时不可初始化挺正常，但是异文件类外定义竟然与private冲突，指定作用域也不行；同文件类外定义竟然还多重定义而不行！于是拉出
-static SoftwareSerial sserial = SoftwareSerial(GEST_RX_PIN, GEST_TX_PIN);
+static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN, GEST_RX_PIN);//9,10
 
 Gesture::Gesture(Device* device) {
   this->device = device;
@@ -46,6 +47,8 @@ void Gesture::initial() {
 
 void Gesture::setGest_data(Gest_Data* gest_data) {
   this->gest_data = gest_data;
+  if (this->gest_data == NULL) {
+  }
 }
 
 Gest_Data* Gesture::getGest_data() {
@@ -55,7 +58,6 @@ Gest_Data* Gesture::getGest_data() {
 Gest_Data* Gesture::detect() {
   String equation = "";
   while (controler.isPressing()) {
-    
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
@@ -72,7 +74,7 @@ Gest_Data* Gesture::detect() {
       float xa0 = ABSOLU_XA0;
       float ya0 = ABSOLU_YA0;
       float za0 = ABSOLU_ZA0;
-      
+
       if (first) { //设置加速度初始值
         xa0 = a[0];
         ya0 = a[1];
@@ -104,6 +106,7 @@ Gest_Data* Gesture::detect() {
         equation += tx + ty + tz;
       }
     }
+    delay(50+(wait++)%50);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
   }
 
   first = true;
@@ -114,9 +117,7 @@ Gest_Data* Gesture::detect() {
 }
 
 Order* Gesture::analyze(Gest_Data* gest_data) {
-  if (gest_data->equation.equals("")) {
-    return NULL;
-  } else {
+  if (!gest_data->equation.equals("")) {
     //打开文件：gest_data.device
     if (SD.begin(SD_PIN)) {
       File file = SD.open(gest_data->device->getInfos().name(), FILE_READ);
@@ -143,7 +144,6 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
             file.read();//跳过\n
             //判断gesture是否匹配
             if (gest_data->equation.equals(data_gesture)) {
-
               static Order ex_temp_order = Order(gest_data->device, data_order);
               file.close();
               return &ex_temp_order;
@@ -161,9 +161,10 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
       }
     }
   }
+  return NULL;
 }
 
-Gest_Quantity_Data* Gesture::quantity_detect(Order* order) { 
+Gest_Quantity_Data* Gesture::quantity_detect(Order* order) {
   while (controler.isPressing()) {
     //获取数据
     serialEvent();
@@ -173,16 +174,16 @@ Gest_Quantity_Data* Gesture::quantity_detect(Order* order) {
       //解析数据信号
       if (Re_buf[0] == 0x55
           && Re_buf [1] == 0x53) { //检查帧头，识别到角度包
-        angle[QUANTITY_AXE-120] = (short(Re_buf [(QUANTITY_AXE-120) * 2 + 3] << 8 | Re_buf [(QUANTITY_AXE-120) * 2 + 2])) / 32768.0 * 180;
-        if (qfirst) { //设置加速度初始值
-          angle0 = angle[QUANTITY_AXE-120];
+        angle[QUANTITY_AXE - 120] = (short(Re_buf [(QUANTITY_AXE - 120) * 2 + 3] << 8 | Re_buf [(QUANTITY_AXE - 120) * 2 + 2])) / 32768.0 * 180;
+        if (qfirst) { //设置角速度初始值
+          angle0 = angle[QUANTITY_AXE - 120];
           qfirst = false;
         }
       } else if (Re_buf[0] == 0x55
                  && Re_buf [1] == 0x52) { //检查帧头，识别到角速度包
-        w[QUANTITY_AXE-120] = (short(Re_buf [(QUANTITY_AXE-120)* 2 + 3] << 8 | Re_buf [(QUANTITY_AXE-120)* 2 + 2])) / 32768.0 * 2000;
+        w[QUANTITY_AXE - 120] = (short(Re_buf [(QUANTITY_AXE - 120) * 2 + 3] << 8 | Re_buf [(QUANTITY_AXE - 120) * 2 + 2])) / 32768.0 * 2000;
         //如果角速度太快则挂起程序
-        if (abs(w[QUANTITY_AXE-120]) >= WTHRESHOLD) {
+        if (abs(w[QUANTITY_AXE - 120]) >= WTHRESHOLD) {
           qfirst = true;
           continue;
         }
@@ -190,14 +191,14 @@ Gest_Quantity_Data* Gesture::quantity_detect(Order* order) {
         continue;
       }
 
-      if (!qfirst && abs(w[QUANTITY_AXE-120]) < WTHRESHOLD) {
+      if (!qfirst && abs(w[QUANTITY_AXE - 120]) < WTHRESHOLD) {
         //计算角度偏离量
-        float deviation = angle[QUANTITY_AXE-120] - angle0;
+        float deviation = angle[QUANTITY_AXE - 120] - angle0;
         deviation = deviation < -10.0 ? 180.0 + deviation : deviation;
         //发送角度
         static Gest_Quantity_Data temp_gest_quantity_data = Gest_Quantity_Data(deviation, order, this->device);
         return &temp_gest_quantity_data;
-      } 
+      }
     }
   }
 }
@@ -207,7 +208,6 @@ Order* Gesture::quantity_analyze(Gest_Quantity_Data* gest_quantity_data) {
   String* orderTypes = gest_quantity_data->device->getOrderTypes();
   Code* codings = gest_quantity_data->device->getCodings();
   Gest_Data* gestures = gest_quantity_data->device->getGestures();
-
   /*
       1.对应到相应定量类型
       2.后检测相应的角度所处的范围并记录下标pos
@@ -252,7 +252,6 @@ Order* Gesture::quantity_analyze(Gest_Quantity_Data* gest_quantity_data) {
 
 void Gesture::serialEvent() {
   while (sserial.available()) {
-
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
 
     Re_buf[counter] = (unsigned char)sserial.read();
@@ -262,7 +261,7 @@ void Gesture::serialEvent() {
     {
       counter = 0;             //重新赋值，准备下一帧数据的接收
       sign = 1;
+      break;
     }
-
   }
 }
