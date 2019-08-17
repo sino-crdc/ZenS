@@ -11,7 +11,7 @@ extern Device light;
 extern Device television;
 extern Device curtain;
 
-Controler::Controler(){}
+Controler::Controler() {}
 
 void Controler::setButtonA(bool state)
 {
@@ -55,8 +55,9 @@ void Controler::initial()
 Device* Controler::device()
 {
   Device* device = NULL;
-  if (buttonA)
+  if (buttonA){
     device = &air_conditioner;
+  }
   else if (buttonB)
     device = &light;
   else if (buttonC)
@@ -67,8 +68,9 @@ Device* Controler::device()
 }
 void Controler::send(Order* order)
 {
-  if (order != NULL)
+  if (order != NULL) {
     order->getDevice()->getIrsend().sendRaw(order->getCode().buf, order->getCode().len, order->getCode().hz);
+  } 
 }
 void Controler::terminate()
 {
@@ -81,39 +83,43 @@ void Controler::terminate()
 bool Controler::isPressing()
 {
   Controler::detect();
-  if (buttonA || buttonB || buttonC || buttonD)
+  if (buttonA || buttonB || buttonC || buttonD) {
     return true;
-  else
+  }
+  else {
     return false;
+  }
 }
-byte Controler::detect(){
+byte Controler::detect() {
   if (digitalRead(BUTTONA_PIN) == HIGH) {
+    //Serial.println("A");
     setButtonA(true);
-    digitalWrite(LEDA_PIN,HIGH);
+    digitalWrite(LEDA_PIN, HIGH);
     return 1;
   }
-  else{
+  else {
     setButtonA(false);
-    digitalWrite(LEDA_PIN,LOW);
+    digitalWrite(LEDA_PIN, LOW);
   }
-    
+
   if (digitalRead(BUTTONB_PIN) == HIGH) {
     setButtonB(true);
     return 2;
   }
   else
     setButtonB(false);
-  if (digitalRead(BUTTONC_PIN == HIGH)) {
+  if (digitalRead(BUTTONC_PIN) == HIGH) {
     setButtonC(true);
     return 3;
   }
   else
     setButtonC(false);
-  if (digitalRead(BUTTOND_PIN == HIGH)) {
+    
+  if (digitalRead(BUTTOND_PIN) == HIGH) {
     setButtonD(true);
     return 4;
   }
   else
     setButtonD(false);
-    return 0;
+  return 0;
 }

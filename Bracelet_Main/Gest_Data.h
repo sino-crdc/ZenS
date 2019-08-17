@@ -13,8 +13,10 @@ class Gest_Data {
     String equation;
     Device *device;
 
-    Gest_Data(){this->equation = "";this->device = NULL;};
     Gest_Data(String equation, Device* device);
+    Gest_Data(){
+      Gest_Data("", NULL);
+    }
 };
-
+//todo 修改没有上传到 master
 #endif

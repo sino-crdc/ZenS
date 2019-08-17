@@ -4,6 +4,8 @@
   <component name="CidrRootsConfiguration">
     <sourceRoots>
       <file path="$PROJECT_DIR$/Bracelet Main" />
+      <file path="$PROJECT_DIR$/Bracelet_Main" />
+      <file path="$PROJECT_DIR$/Gesture_Detect_Debug" />
       <file path="$PROJECT_DIR$/IRrecord" />
     </sourceRoots>
     <excludeRoots>
