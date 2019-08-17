@@ -20,12 +20,13 @@ extern Controler controler;
 //todo a w angle 的类型
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
+static unsigned char wait = 50;
 static bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
 static bool qfirst = true;
 static float a[3], w[3], angle[3];
 
 //Arduino对基于对象的支持不是很好，private static 变量，声明时不可初始化挺正常，但是异文件类外定义竟然与private冲突，指定作用域也不行；同文件类外定义竟然还多重定义而不行！于是拉出
-static SoftwareSerial sserial = SoftwareSerial(GEST_RX_PIN, GEST_TX_PIN);
+static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN, GEST_RX_PIN);//9,10
 
 Gesture::Gesture(Device* device) {
   Serial.println("gesture constructing...");
@@ -122,6 +123,7 @@ Gest_Data* Gesture::detect() {
         Serial.println("gesture recorded: " + equation);
       }
     }
+    delay(50+(wait++)%50);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
   }
 
   first = true;
@@ -136,7 +138,6 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
   Serial.println("gesture analyzing...");
   if (gest_data->equation.equals("")) {
     Serial.println("getorder NULL.");
-    return NULL;
   } else {
     //打开文件：gest_data.device
     Serial.println("open corresponding device\'s file");
@@ -188,10 +189,11 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
       }
     }
   }
+  return NULL;
 }
 
 Gest_Quantity_Data* Gesture::quantity_detect(Order* order) {
-  Serial.println("quantity gesture analyzing...");
+  Serial.println("quantity gesture detecting...");//todo master
   while (controler.isPressing()) {
     //获取数据
     serialEvent();
@@ -310,6 +312,7 @@ void Gesture::serialEvent() {
     {
       counter = 0;             //重新赋值，准备下一帧数据的接收
       sign = 1;
+      break;
     }
   }
   Serial.println("JY61 package reading end.");
