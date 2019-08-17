@@ -51,7 +51,7 @@ void setup(){
 
 void loop(){
   Serial.println("final equation: " + detect());
-  Serial.print("angle: ");
+// quantity_detect();
 }
 
 bool isPressing(){
@@ -112,7 +112,7 @@ String detect() {
           tz = "z-";
         }
         equation += tx + ty + tz;
-        Serial.println("gesture recorded: " + equation);
+        Serial.println(equation);
       }
     }
     delay(50+(wait++)%50);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
@@ -123,8 +123,8 @@ String detect() {
   return equation;
 }
 
-float quantity_detect() {
-    Serial.println("quantity gesture detecting...");
+void quantity_detect() {
+  Serial.println("quantity gesture detecting...");
   
   while(isPressing()){
       //获取数据
