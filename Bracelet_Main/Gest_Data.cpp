@@ -18,4 +18,5 @@ Gest_Data::Gest_Data(String equation, Device* device) {
   }else{
     Serial.println("equation^"+this->equation+" device^"+this->device->getName());
   }
+  //todo 修改没有上传到 master
 }
