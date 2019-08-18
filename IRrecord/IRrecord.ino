@@ -1,6 +1,6 @@
 #include <IRremote.h>
 #include <SPI.h>
-#include <SD.h>  //引入
+#include <SD.h>//引入
 
 #define SD_PIN 10
 #define MOSI 11
@@ -9,7 +9,7 @@
 
 File myFile;
 
-int RECV_PIN = 9;  //在11口
+int RECV_PIN = 9;  
 
 IRrecv irrecv(RECV_PIN);
 
@@ -30,30 +30,50 @@ void setup()
 
 
   Serial.print("Initializing SD card...");
-
+  pinMode(10,OUTPUT);
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
-    while (1);
+    //while (1);
   }
-  Serial.println("initialization done.");//配置好SD卡
-
-  // open a new file 
-  Serial.println("Creating ac.txt");
-  myFile = SD.open("ac.txt", FILE_WRITE);
-  Serial.println("ac.txt is created");
-
-  pinMode(MOSI, OUTPUT);
-  pinMode(MISO, INPUT);
+  Serial.println("Creating my documents...");
+  if(SD.exists("acc.txt"))
+    SD.remove("acc.txt");
+  myFile=SD.open("acc.txt",FILE_WRITE);
+  Serial.println("my_documents is created");
+  Serial.println(SD.exists("acc.txt"));
+  myFile.close();
 }
 
 void loop() {
+  myFile=SD.open("acc.txt",FILE_WRITE);
   if(myFile){
       if (irrecv.decode(&results)) {
            Serial.println("Received a code, saving as raw");
-           myFile.write(results.value, BIN);
-           myFile.write("#");
-           irrecv.resume(); 
-      }// Receive the next value
-      delay(100);
-   }
+           dump(&results);
+           irrecv.resume(); }// Receive the next value
+      delay(1000);
+      }
+   myFile.close();
+   myFile=SD.open("acc.txt",FILE_READ);      
+   while(myFile.available())
+    Serial.print((char)myFile.read());
+   Serial.println();
+   myFile.close();
+}
+
+void dump(decode_results * results)
+{
+  int t = results->rawlen;
+  myFile.print(t);
+  myFile.print(':');
+  Serial.print(t);
+  Serial.print(':');
+  for(int i=0;i<t;i++){
+      myFile.print(results->rawbuf[i]*USECPERTICK);
+      if(i<t-1) myFile.print(',');
+      Serial.print(results->rawbuf[i]*USECPERTICK);
+      if(i<t-1) Serial.print(',');
+    }
+  myFile.print('#');
+  Serial.println();
 }
