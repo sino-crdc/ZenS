@@ -33,7 +33,7 @@ void setup() {
   pinMode(LEDC_PIN, OUTPUT);
   pinMode(LEDD_PIN, OUTPUT);
 
-  Serial.begin(9600);//调试用
+  //Serial.begin(9600);//调试用
 }
 
 void loop() {
