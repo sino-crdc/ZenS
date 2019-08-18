@@ -1,8 +1,8 @@
 #include <SoftwareSerial.h>
 
-#define DAXTHRESHOLD 0.01//x轴加速度可标志临界变化量
-#define DAYTHRESHOLD 0.01//y轴加速度可标志临界变化量
-#define DAZTHRESHOLD 0.01//z轴加速度可标志临界变化量
+#define DAXTHRESHOLD 0.75//x轴加速度可标志临界变化量
+#define DAYTHRESHOLD 2.00//y轴加速度可标志临界变化量
+#define DAZTHRESHOLD 2.00//z轴加速度可标志临界变化量
 #define ABSOLU_XA0 0.1//x轴绝对初始加速度
 #define ABSOLU_YA0 0.1//y轴绝对初始加速度
 #define ABSOLU_ZA0 1.1//z轴绝对初始加速度
@@ -27,31 +27,35 @@ static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN, GEST_RX_PIN);//9,10
 String detect();
 void serialEvent();
 bool isPressing();
-float quantity_detect();
+void quantity_detect();
+void simplify(String);
 
 void setup(){
   Serial.begin(9600);
   Serial.println("initializing...");
   sserial.begin(115200);
-  Serial.println("baud rate：115200");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x61);
+  Serial.println("baud rate：9600");
+  char A[3]={0xFF,0xAA,0x61};
+  sserial.write(A,3);
   Serial.println("set to serial communicaiton.");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x63);
+  char B[3] = {0xFF,0xAA,0x63};
+  sserial.write(B,3);
   Serial.println("baud rate 115200, return rate 100HZ.");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x66);
+  char C[3] = {0xFF,0xAA,0x66};
+  sserial.write(C,3);
   Serial.println("Vertical installation.");
   pinMode(BUTTON, INPUT);
 }
 
 void loop(){
-  Serial.println("final equation: " + detect());
-// quantity_detect();
+//  Serial.println("final equation: " + detect());
+
+ quantity_detect();
+ 
+//  while(isPressing()){
+//    serialEvent();
+//    Serial.println();
+//  }
 }
 
 bool isPressing(){
@@ -73,8 +77,14 @@ String detect() {
         a[0] = (short(Re_buf [3] << 8 | Re_buf [2])) / 32768.0 * 16;//x
         a[1] = (short(Re_buf [5] << 8 | Re_buf [4])) / 32768.0 * 16;//y
         a[2] = (short(Re_buf [7] << 8 | Re_buf [6])) / 32768.0 * 16;//z
-      } else {
-        Serial.println("acceleration package not gotten");
+      } else if(Re_buf[0] == 0x55 && Re_buf [1] == 0x52){
+        Serial.println("angle package gotten");
+        continue;
+      } else if(Re_buf[0] == 0x55 && Re_buf [1] == 0x53){
+        Serial.println("w package gotten");
+        continue;
+      }else{
+        Serial.println("I love XiaoKe.");
         continue;
       }
 
@@ -93,29 +103,30 @@ String detect() {
         String tx = "";
         String ty = "";
         String tz = "";
-        if (a[0] - xa0 > 0.01) {
+        if (a[0] - xa0 > DAXTHRESHOLD) {
           tx = "x+";
         }
-        if (xa0 - a[0] > 0.01) {
+        if (xa0 - a[0] > DAXTHRESHOLD) {
           tx = "x-";
         }
-        if (a[1] - ya0 > 0.01) {
+        if (a[1] - ya0 > DAYTHRESHOLD) {
           ty = "y+";
         }
-        if (ya0 - a[1] > 0.01) {
+        if (ya0 - a[1] > DAYTHRESHOLD) {
           ty = "y-";
         }
-        if (a[2] - za0 > 0.01) {
+        if (a[2] - za0 > DAZTHRESHOLD) {
           tz = "z+";
         }
-        if (za0 - a[2] > 0.01) {
+        if (za0 - a[2] > DAZTHRESHOLD) {
           tz = "z-";
         }
         equation += tx + ty + tz;
+        simplify(equation);
         Serial.println(equation);
       }
     }
-    delay(50+(wait++)%50);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
+    delay(10);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
   }
 
   first = true;
@@ -139,7 +150,7 @@ void quantity_detect() {
         Serial.println("Angle package gotten.");
         angle[QUANTITY_AXE - 120] = (short(Re_buf [(QUANTITY_AXE - 120) * 2 + 3] << 8 | Re_buf [(QUANTITY_AXE - 120) * 2 + 2])) / 32768.0 * 180;
         if (qfirst) { //设置角速度初始值
-          Serial.println("set w initial.");
+          Serial.println("set a initial.");
           angle0 = angle[QUANTITY_AXE - 120];
           qfirst = false;
         }
@@ -172,11 +183,10 @@ void quantity_detect() {
 
 void serialEvent() {
   while (sserial.available()) {
-    Serial.println("JY61 serial available.");
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
 
     Re_buf[counter] = (unsigned char)sserial.read();
-    if (counter == 0 && Re_buf[0] != 0x55) return; //第0号数据不是帧头
+    if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
     counter++;
     if (counter == 11)          //接收到11个数据
     {
@@ -185,5 +195,9 @@ void serialEvent() {
       break;
     }
   }
-  Serial.println("JY61 package reading end.");
+  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
+}
+
+void simplify(String &string){
+
 }

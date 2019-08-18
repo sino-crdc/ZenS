@@ -31,6 +31,7 @@ class Gesture{
     Gest_Data* gest_data = NULL;
     
     void serialEvent(); 
+    void simplify(String string);
 };
 
 #endif

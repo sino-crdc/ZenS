@@ -6,9 +6,9 @@
 
 #include "Gesture.h"
 
-#define DAXTHRESHOLD 0.01//x轴加速度可标志临界变化量
-#define DAYTHRESHOLD 0.01//y轴加速度可标志临界变化量
-#define DAZTHRESHOLD 0.01//z轴加速度可标志临界变化量
+#define DAXTHRESHOLD 0.75//x轴加速度可标志临界变化量
+#define DAYTHRESHOLD 2.00//y轴加速度可标志临界变化量
+#define DAZTHRESHOLD 2.00//z轴加速度可标志临界变化量
 #define ABSOLU_XA0 0.1//x轴绝对初始加速度
 #define ABSOLU_YA0 0.1//y轴绝对初始加速度
 #define ABSOLU_ZA0 1.1//z轴绝对初始加速度
@@ -17,7 +17,6 @@
 
 extern Controler controler;
 
-//todo a w angle 的类型
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
 static unsigned char wait = 50;
@@ -39,17 +38,14 @@ void Gesture::initial() {
   Serial.println("gesture.initializing...");
   sserial.begin(115200);
   Serial.println("baud rate：115200");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x61);
+  char A[3]={0xFF,0xAA,0x61};
+  sserial.write(A,3);
   Serial.println("set to serial communicaiton.");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x63);
+  char B[3] = {0xFF,0xAA,0x63};
+  sserial.write(B,3);
   Serial.println("baud rate 115200, return rate 100HZ.");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x66);
+  char C[3] = {0xFF,0xAA,0x66};
+  sserial.write(C,3);
   Serial.println("Vertical installation.");
 }
 
@@ -123,7 +119,7 @@ Gest_Data* Gesture::detect() {
         Serial.println("gesture recorded: " + equation);
       }
     }
-    delay(50+(wait++)%50);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
+    delay(10+(wait++)%10);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
   }
 
   first = true;
@@ -300,13 +296,12 @@ Order* Gesture::quantity_analyze(Gest_Quantity_Data* gest_quantity_data) {
 
 }
 
-void Gesture::serialEvent() {
+void serialEvent() {
   while (sserial.available()) {
-    Serial.println("JY61 serial available.");
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
 
     Re_buf[counter] = (unsigned char)sserial.read();
-    if (counter == 0 && Re_buf[0] != 0x55) return; //第0号数据不是帧头
+    if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
     counter++;
     if (counter == 11)          //接收到11个数据
     {
@@ -315,5 +310,5 @@ void Gesture::serialEvent() {
       break;
     }
   }
-  Serial.println("JY61 package reading end.");
+  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
 }

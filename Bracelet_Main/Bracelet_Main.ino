@@ -32,6 +32,7 @@ void setup() {
   pinMode(LEDB_PIN, OUTPUT);
   pinMode(LEDC_PIN, OUTPUT);
   pinMode(LEDD_PIN, OUTPUT);
+  pinMode(SD_PIN, OUTPUT);
 }
 
 void loop() {
