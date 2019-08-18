@@ -28,29 +28,34 @@ String detect();
 void serialEvent();
 bool isPressing();
 void quantity_detect();
-void simplify(String);
+void simplify(String*);
 
 void setup(){
   Serial.begin(9600);
   Serial.println("initializing...");
+  
   sserial.begin(115200);
-  Serial.println("baud rate：9600");
-  char A[3]={0xFF,0xAA,0x61};
-  sserial.write(A,3);
-  Serial.println("set to serial communicaiton.");
-  char B[3] = {0xFF,0xAA,0x63};
-  sserial.write(B,3);
-  Serial.println("baud rate 115200, return rate 100HZ.");
-  char C[3] = {0xFF,0xAA,0x66};
-  sserial.write(C,3);
+  Serial.println("baud rate：115200");
+  
+  char vertical[3] = {0xFF,0xAA,0x66};
+  sserial.write(vertical,3);
   Serial.println("Vertical installation.");
+  
+  char communication[3]={0xFF,0xAA,0x61};
+  sserial.write(communication,3);
+  Serial.println("set to serial communicaiton.");
+  
+  char baud[3] = {0xFF,0xAA,0x63};
+  sserial.write(baud,3);
+  Serial.println("baud rate 115200, return rate 100HZ.");
+  
   pinMode(BUTTON, INPUT);
 }
 
 void loop(){
-//  Serial.println("final equation: " + detect());
+  Serial.println("final equation: " + detect());
 
- quantity_detect();
+// quantity_detect();
  
 //  while(isPressing()){
 //    serialEvent();
@@ -122,11 +127,15 @@ String detect() {
           tz = "z-";
         }
         equation += tx + ty + tz;
-        simplify(equation);
+        simplify(&equation);
         Serial.println(equation);
       }
     }
-    delay(10);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
+    char zzero[3]={0xFF,0xAA,0x52};
+    sserial.write(zzero,3);
+    
+    char acheck[3]={0xFF,0xAA,0x67};
+    sserial.write(acheck,3);
   }
 
   first = true;
@@ -178,13 +187,14 @@ void quantity_detect() {
         Serial.print(" ");
       }
     }
+    char zzero[3]={0xFF,0xAA,0x52};
+    sserial.write(zzero,3);
   }
 }
 
 void serialEvent() {
   while (sserial.available()) {
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
-
     Re_buf[counter] = (unsigned char)sserial.read();
     if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
     counter++;
@@ -198,6 +208,28 @@ void serialEvent() {
   Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
 }
 
-void simplify(String &string){
-
+void simplify(String *s){
+  int len=s->length();
+  int * f=(int *)malloc(6*sizeof(int));
+  char * c=(char *)malloc(len*sizeof(char));
+  for(int i=0;i<6;i++) 
+    f[i]=0;
+  for(int i=0;i<len;i++){
+    c[i]=s->charAt(i);
+    if(i&1){
+        int d=(c[i-1]-'x')*2;
+        if(c[i]=='-') d++;
+        if(f[d])
+          c[i-1]=0,c[i]=0;
+        else
+          f[d]=1;
+      }
+  }
+  (*s)="";
+  for(int i=0;i<len;i++){
+      if(c[i])
+        s->concat(c[i]);
+    }
+  free(f);
+  free(c);
 }
