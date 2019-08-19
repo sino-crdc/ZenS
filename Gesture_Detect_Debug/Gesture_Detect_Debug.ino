@@ -22,7 +22,7 @@ static bool first = true;//用于定性检测函数，是否是第一次传回�
 static bool qfirst = true;
 static float a[3], w[3], angle[3];
 
-static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN, GEST_RX_PIN);//9,10
+static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN, GEST_RX_PIN);
 
 String detect();
 void serialEvent();
@@ -193,8 +193,9 @@ void quantity_detect() {
 }
 
 void serialEvent() {
-  while (sserial.available()) {
+  while (sserial.available()) { 
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
+    Serial.println("available.");
     Re_buf[counter] = (unsigned char)sserial.read();
     if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
     counter++;
