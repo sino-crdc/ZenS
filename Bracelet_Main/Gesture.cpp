@@ -174,8 +174,23 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
             if(file.available())
               file.read();//跳过\n
             //判断gesture是否匹配
+            gest_data->equation.trim();
+            data_gesture.trim();
             Serial.println(gest_data->equation);
             Serial.println(data_gesture);
+//            for(int i = 0;i<7; i++){
+//              Serial.print(gest_data->equation.charAt(i));
+//              Serial.print(" ");
+//            }
+//            Serial.println();
+//            for(int i = 0;i<7; i++){
+//              Serial.print(data_gesture.charAt(i));
+//              Serial.print(" ");
+//            }
+//            Serial.println();
+            Serial.println(gest_data->equation.charAt(6) == '\0');
+            Serial.println(data_gesture.charAt(6) == '\0');
+            Serial.print(char('\0'+13));
             Serial.println(gest_data->equation.compareTo(data_gesture));
             if (gest_data->equation.compareTo(data_gesture)) {
               Serial.println("in file: gesture found.");
