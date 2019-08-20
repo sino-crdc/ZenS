@@ -14,14 +14,14 @@
 
 Controler controler;
 
-Device air_conditioner = Device("Air_Conditioner", IRsend(), File(SdFile(), "Air_Conditioner.infos"), AC_ORDER_NUM);
-Device light = Device("Light", IRsend(), File(SdFile(), "Light.infos"), LIGHT_ORDER_NUM);
-Device television = Device("Television", IRsend(), File(SdFile(), "Television.infos"), TELE_ORDER_NUM);
-Device curtain = Device("Curtain", IRsend(), File(SdFile(), "Curtain.infos"), CURTAIN_ORDER_NUM);
+Device air_conditioner = Device("AC", IRsend(), File(SdFile(), "AC.txt"), AC_ORDER_NUM);
+Device light = Device("Light", IRsend(), File(SdFile(), "Light.txt"), LIGHT_ORDER_NUM);
+Device television = Device("Tele", IRsend(), File(SdFile(), "Tele.txt"), TELE_ORDER_NUM);
+Device curtain = Device("Curtain", IRsend(), File(SdFile(), "Curtain.txt"), CURTAIN_ORDER_NUM);
 
 //todo: 关于struct的指针化，String的问题(string、String.h)
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   controler.initial();
   Gesture::initial();
   pinMode(BUTTONA_PIN, INPUT);

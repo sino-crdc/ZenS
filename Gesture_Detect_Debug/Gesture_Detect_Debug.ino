@@ -11,8 +11,8 @@
 #define QUANTITY_AXE 'x'
 
 
-#define GEST_RX_PIN 9//对应JY61的TX
-#define GEST_TX_PIN 10//对应JY61的RX
+#define GEST_RX_PIN 9
+#define GEST_TX_PIN 10
 #define BUTTON 13
 
 static unsigned char Re_buf[11], counter = 0;
@@ -22,7 +22,7 @@ static bool first = true;//用于定性检测函数，是否是第一次传回�
 static bool qfirst = true;
 static float a[3], w[3], angle[3];
 
-static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN, GEST_RX_PIN);
+static SoftwareSerial sserial = SoftwareSerial(GEST_TX_PIN,GEST_RX_PIN);
 
 String detect();
 void serialEvent();
@@ -31,11 +31,11 @@ void quantity_detect();
 void simplify(String*);
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("initializing...");
   
-  sserial.begin(115200);
-  Serial.println("baud rate：115200");
+  sserial.begin(9600);
+  Serial.println("baud rate：9600");
   
   char vertical[3] = {0xFF,0xAA,0x66};
   sserial.write(vertical,3);
@@ -45,9 +45,9 @@ void setup(){
   sserial.write(communication,3);
   Serial.println("set to serial communicaiton.");
   
-  char baud[3] = {0xFF,0xAA,0x63};
+  char baud[3] = {0xFF,0xAA,0x64};
   sserial.write(baud,3);
-  Serial.println("baud rate 115200, return rate 100HZ.");
+  Serial.println("baud rate 9600, return rate 20Hz.");
   
   pinMode(BUTTON, INPUT);
 }
