@@ -6,9 +6,8 @@
 #include "Device.h"
 
 //todo 设置机制，将SD卡中存储数据，有用的或者频繁使用的部分加载到EEPROM
-Device::Device(String name, IRsend irsend, File infos,int orderNum){
+Device::Device(String name, File infos,int orderNum){
   this->name = name;
-  this->irsend = irsend;
   this->infos = infos;
   this->orderNum = orderNum;
 }
@@ -16,11 +15,6 @@ Device::Device(String name, IRsend irsend, File infos,int orderNum){
 String Device::getName(){
   Serial.println("Device::getname");
   return this->name;
-}
-
-IRsend Device::getIrsend(){
-  Serial.println("Device::getIrsend");
-  return this->irsend;
 }
 
 File Device::getInfos(){

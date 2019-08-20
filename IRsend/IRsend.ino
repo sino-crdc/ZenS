@@ -4,7 +4,6 @@
 #include <IRremote.h>
 #include <SPI.h>
 #include <SD.h>//引入
-#include <IRremote.h>
 
 IRsend irsend;
 File myFile;
@@ -26,8 +25,8 @@ void setup()
   if(myFile){
     Serial.println("convertion begin");
     while(myFile.available()){
-        //cc[lencc++]=(char)myFile.read();
-        //Serial.print(cc[lencc-1]);
+        cc[lencc++]=(char)myFile.read();
+        Serial.print(cc[lencc-1]);
         if(cc[lencc-1]==':'){
             lencc--;
             len=tonum()-1;
@@ -48,11 +47,11 @@ void setup()
           }
       }
   }
-  //Serial.println();
+  Serial.println();
   myFile.close();
-  //for(int i=0;i<len-1;i++)
-    //Serial.print(a[i]),Serial.print(',');
-  //Serial.println();
+  for(int i=0;i<len-1;i++)
+    Serial.print(a[i]),Serial.print(',');
+  Serial.println();
 }
 
 void loop()
