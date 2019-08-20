@@ -4,7 +4,6 @@
 #include <IRremote.h>
 #include <SPI.h>
 #include <SD.h>//引入
-#include <IRremote.h>
 
 IRsend irsend;
 File myFile;
@@ -22,7 +21,7 @@ void setup()
       Serial.println("SD initialization failed!");
     }
   Serial.println("SD initialization done");
-  myFile=SD.open("ac.txt",FILE_READ);
+  myFile=SD.open("acc.txt",FILE_READ);
   if(myFile){
     Serial.println("convertion begin");
     while(myFile.available()){

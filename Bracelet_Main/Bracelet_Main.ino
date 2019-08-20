@@ -14,10 +14,10 @@
 
 Controler controler;
 
-Device air_conditioner = Device("AC", IRsend(), File(SdFile(), "AC.txt"), AC_ORDER_NUM);
-Device light = Device("Light", IRsend(), File(SdFile(), "Light.txt"), LIGHT_ORDER_NUM);
-Device television = Device("Tele", IRsend(), File(SdFile(), "Tele.txt"), TELE_ORDER_NUM);
-Device curtain = Device("Curtain", IRsend(), File(SdFile(), "Curtain.txt"), CURTAIN_ORDER_NUM);
+Device air_conditioner = Device("AC", File(SdFile(), "AC.txt"), AC_ORDER_NUM);
+Device light = Device("Light", File(SdFile(), "Light.txt"), LIGHT_ORDER_NUM);
+Device television = Device("Tele", File(SdFile(), "Tele.txt"), TELE_ORDER_NUM);
+Device curtain = Device("Curtain", File(SdFile(), "Curtain.txt"), CURTAIN_ORDER_NUM);
 
 //todo: 关于struct的指针化，String的问题(string、String.h)
 void setup() {

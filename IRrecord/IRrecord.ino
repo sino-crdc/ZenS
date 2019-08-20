@@ -15,6 +15,10 @@ IRrecv irrecv(RECV_PIN);
 
 decode_results results;
 
+union code{
+    byte x[2];
+    int num;
+  }x;
 void setup()
 {
   Serial.begin(9600);
@@ -33,7 +37,7 @@ void setup()
   pinMode(10,OUTPUT);
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
-    //while (1);
+    while (1);
   }
   Serial.println("Creating my documents...");
   if(SD.exists("ac.txt"))
@@ -55,8 +59,9 @@ void loop() {
       }
    myFile.close();
    myFile=SD.open("ac.txt",FILE_READ);      
-   while(myFile.available())
-    Serial.print((char)myFile.read());
+   while(myFile.available()){
+    Serial.print((char)myFile.read()),Serial.print(" ");
+   }
    Serial.println();
    myFile.close();
 }
@@ -64,11 +69,9 @@ void loop() {
 void dump(decode_results * results)
 {
   int t = results->rawlen;
-  myFile.print(t);
-  myFile.print(':');
   Serial.print(t);
   Serial.print(':');
-  for(int i=0;i<t;i++){
+  for(int i=1;i<t;i++){
       myFile.print(results->rawbuf[i]*USECPERTICK);
       if(i<t-1) myFile.print(',');
       Serial.print(results->rawbuf[i]*USECPERTICK);

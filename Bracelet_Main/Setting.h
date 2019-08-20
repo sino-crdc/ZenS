@@ -16,14 +16,14 @@
 
 #define SD_PIN 53
 
-#define RAY_PIN 3
+#define RAY_PIN 9
 
 #define BUTTONA_PIN 29
 #define BUTTONB_PIN 30
 #define BUTTONC_PIN 31
 #define BUTTOND_PIN 32
 
-#define GEST_RX_PIN 9
+#define GEST_RX_PIN 7
 #define GEST_TX_PIN 10
 
 
@@ -33,7 +33,7 @@
 #define LEDD_PIN 49 
 
 typedef struct{
-  unsigned int buf[243];
+  unsigned int buf[243]={0};
   int len = 243;
   int hz = 38;
 }Code;//todo: 要不要指针化？

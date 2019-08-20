@@ -192,9 +192,10 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
             Serial.println(data_gesture.charAt(6) == '\0');
             Serial.print(char('\0'+13));
             Serial.println(gest_data->equation.compareTo(data_gesture));
-            if (gest_data->equation.compareTo(data_gesture)) {
+            if (gest_data->equation.equals(data_gesture)) {
               Serial.println("in file: gesture found.");
-              static Order ex_temp_order = Order(gest_data->device, data_order);
+              static Order ex_temp_order = Order(gest_data->device, data_order);//todo 清理对象累积
+              ex_temp_order = Order(gest_data->device, data_order);
               file.close();
               Serial.println("getorder: device^" + ex_temp_order.getDevice()->getName() + " orderType^" + ex_temp_order.getOrderType());
               return &ex_temp_order;
