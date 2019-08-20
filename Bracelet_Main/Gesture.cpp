@@ -6,9 +6,9 @@
 
 #include "Gesture.h"
 
-#define DAXTHRESHOLD 0.01//x轴加速度可标志临界变化量
-#define DAYTHRESHOLD 0.01//y轴加速度可标志临界变化量
-#define DAZTHRESHOLD 0.01//z轴加速度可标志临界变化量
+#define DAXTHRESHOLD 0.75//x轴加速度可标志临界变化量
+#define DAYTHRESHOLD 2.00//y轴加速度可标志临界变化量
+#define DAZTHRESHOLD 2.00//z轴加速度可标志临界变化量
 #define ABSOLU_XA0 0.1//x轴绝对初始加速度
 #define ABSOLU_YA0 0.1//y轴绝对初始加速度
 #define ABSOLU_ZA0 1.1//z轴绝对初始加速度
@@ -17,10 +17,9 @@
 
 extern Controler controler;
 
-//todo a w angle 的类型
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
-static unsigned char wait = 50;
+//static unsigned char wait = 50;
 static bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
 static bool qfirst = true;
 static float a[3], w[3], angle[3];
@@ -37,19 +36,19 @@ Gesture::Gesture(Device* device) {
 
 void Gesture::initial() {
   Serial.println("gesture.initializing...");
-  sserial.begin(115200);
-  Serial.println("baud rate：115200");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x61);
+  sserial.begin(9600);
+  Serial.println("baud rate：9600");
+  
+  char A[3]={0xFF,0xAA,0x61};
+  sserial.write(A,3);
   Serial.println("set to serial communicaiton.");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x63);
-  Serial.println("baud rate 115200, return rate 100HZ.");
-  sserial.write(0xFF);
-  sserial.write(0xAA);
-  sserial.write(0x66);
+  
+  char B[3] = {0xFF,0xAA,0x64};
+  sserial.write(B,3);
+  Serial.println("baud rate 9600, return rate 20HZ.");
+  
+  char C[3] = {0xFF,0xAA,0x66};
+  sserial.write(C,3);
   Serial.println("Vertical installation.");
 }
 
@@ -120,10 +119,16 @@ Gest_Data* Gesture::detect() {
           tz = "z-";
         }
         equation += tx + ty + tz;
+        simplify(&equation);
         Serial.println("gesture recorded: " + equation);
       }
     }
-    delay(50+(wait++)%50);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
+    char zzero[3]={0xFF,0xAA,0x52};
+    sserial.write(zzero,3);
+    
+    char acheck[3]={0xFF,0xAA,0x67};
+    sserial.write(acheck,3);
+//    delay(10+(wait++)%10);//判断循环条件->进入serialEvent->输出一个available，未执行完便直接开始新的循环(此函数)
   }
 
   first = true;
@@ -142,6 +147,7 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
     //打开文件：gest_data.device
     Serial.println("open corresponding device\'s file");
     if (SD.begin(SD_PIN)) {
+      Serial.println("in");
       File file = SD.open(gest_data->device->getInfos().name(), FILE_READ);
       if (file) {
         Serial.println("opened.");
@@ -165,9 +171,13 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
             while (file.peek() != byte('\n') && file.available()) {
               data_gesture += char(file.read());
             }
-            file.read();//跳过\n
+            if(file.available())
+              file.read();//跳过\n
             //判断gesture是否匹配
-            if (gest_data->equation.equals(data_gesture)) {
+            Serial.println(gest_data->equation);
+            Serial.println(data_gesture);
+            Serial.println(gest_data->equation.compareTo(data_gesture));
+            if (gest_data->equation.compareTo(data_gesture)) {
               Serial.println("in file: gesture found.");
               static Order ex_temp_order = Order(gest_data->device, data_order);
               file.close();
@@ -236,6 +246,8 @@ Gest_Quantity_Data* Gesture::quantity_detect(Order* order) {
         return &temp_gest_quantity_data;
       }
     }
+    char zzero[3]={0xFF,0xAA,0x52};
+    sserial.write(zzero,3);
   }
 }
 
@@ -302,11 +314,10 @@ Order* Gesture::quantity_analyze(Gest_Quantity_Data* gest_quantity_data) {
 
 void Gesture::serialEvent() {
   while (sserial.available()) {
-    Serial.println("JY61 serial available.");
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
-
     Re_buf[counter] = (unsigned char)sserial.read();
-    if (counter == 0 && Re_buf[0] != 0x55) return; //第0号数据不是帧头
+    if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
+    Serial.print(Re_buf[counter],HEX);Serial.print("  ");
     counter++;
     if (counter == 11)          //接收到11个数据
     {
@@ -315,5 +326,31 @@ void Gesture::serialEvent() {
       break;
     }
   }
-  Serial.println("JY61 package reading end.");
+  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
+}
+
+void Gesture::simplify(String *s){
+  int len=s->length();
+  int * f=(int *)malloc(6*sizeof(int));
+  char * c=(char *)malloc(len*sizeof(char));
+  for(int i=0;i<6;i++) 
+    f[i]=0;
+  for(int i=0;i<len;i++){
+    c[i]=s->charAt(i);
+    if(i&1){
+        int d=(c[i-1]-'x')*2;
+        if(c[i]=='-') d++;
+        if(f[d])
+          c[i-1]=0,c[i]=0;
+        else
+          f[d]=1;
+      }
+  }
+  (*s)="";
+  for(int i=0;i<len;i++){
+      if(c[i])
+        s->concat(c[i]);
+    }
+  free(f);
+  free(c);
 }
