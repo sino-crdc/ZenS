@@ -88,12 +88,13 @@ void Device::complete(){
          
         //获取第i个gesture
         String temp = "";
-        while(char(this->infos.peek()) != '\n'){
+        while(char(this->infos.peek()) != '\r'){
           temp += char(this->infos.read());
         }
         this->gestures[i].equation = temp;
         this->gestures[i].device = this;
-        this->infos.read();
+        this->infos.read();//抛弃\r
+        this->infos.read();//抛弃\n
       }
     }
     this->infos.close();

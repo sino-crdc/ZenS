@@ -168,14 +168,17 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
           //每两个'#'
           if (i % 2 == 0) {
             //加载gesture.equation
-            while (file.peek() != byte('\n') && file.available()) {
+            while (file.peek() != byte('\r') && file.available()) {
               data_gesture += char(file.read());
             }
-            if(file.available())
+            if(file.available()){
+              file.read();//跳过\r
               file.read();//跳过\n
+            }
             //判断gesture是否匹配
             gest_data->equation.trim();
             data_gesture.trim();
+            
             Serial.println(gest_data->equation);
             Serial.println(data_gesture);
 //            for(int i = 0;i<7; i++){
@@ -192,6 +195,7 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
             Serial.println(data_gesture.charAt(6) == '\0');
             Serial.print(char('\0'+13));
             Serial.println(gest_data->equation.compareTo(data_gesture));
+
             if (gest_data->equation.equals(data_gesture)) {
               Serial.println("in file: gesture found.");
               static Order ex_temp_order = Order(gest_data->device, data_order);//todo 清理对象累积
@@ -365,7 +369,7 @@ void Gesture::simplify(String *s){
   (*s)="";
   for(int i=0;i<len;i++){
       if(c[i])
-        s->concat(c[i]);
+        (*s) += c[i];
     }
   free(f);
   free(c);
