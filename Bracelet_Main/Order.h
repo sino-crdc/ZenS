@@ -26,5 +26,7 @@ class Order {
     String orderType;
     Code coding;
     bool isQuantity;
+
+    
 };
 #endif
