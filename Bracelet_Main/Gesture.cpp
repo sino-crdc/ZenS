@@ -36,16 +36,16 @@ Gesture::Gesture(Device* device) {
 
 void Gesture::initial() {
   Serial.println("gesture.initializing...");
-  sserial.begin(115200);
-  Serial.println("baud rate：115200");
+  sserial.begin(9600);
+  Serial.println("baud rate：9600");
   
   char A[3]={0xFF,0xAA,0x61};
   sserial.write(A,3);
   Serial.println("set to serial communicaiton.");
   
-  char B[3] = {0xFF,0xAA,0x63};
+  char B[3] = {0xFF,0xAA,0x64};
   sserial.write(B,3);
-  Serial.println("baud rate 115200, return rate 100HZ.");
+  Serial.println("baud rate 9600, return rate 20HZ.");
   
   char C[3] = {0xFF,0xAA,0x66};
   sserial.write(C,3);
@@ -147,6 +147,7 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
     //打开文件：gest_data.device
     Serial.println("open corresponding device\'s file");
     if (SD.begin(SD_PIN)) {
+      Serial.println("in");
       File file = SD.open(gest_data->device->getInfos().name(), FILE_READ);
       if (file) {
         Serial.println("opened.");
@@ -170,9 +171,13 @@ Order* Gesture::analyze(Gest_Data* gest_data) {
             while (file.peek() != byte('\n') && file.available()) {
               data_gesture += char(file.read());
             }
-            file.read();//跳过\n
+            if(file.available())
+              file.read();//跳过\n
             //判断gesture是否匹配
-            if (gest_data->equation.equals(data_gesture)) {
+            Serial.println(gest_data->equation);
+            Serial.println(data_gesture);
+            Serial.println(gest_data->equation.compareTo(data_gesture));
+            if (gest_data->equation.compareTo(data_gesture)) {
               Serial.println("in file: gesture found.");
               static Order ex_temp_order = Order(gest_data->device, data_order);
               file.close();
@@ -307,11 +312,12 @@ Order* Gesture::quantity_analyze(Gest_Quantity_Data* gest_quantity_data) {
 
 }
 
-void serialEvent() {
+void Gesture::serialEvent() {
   while (sserial.available()) {
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
     Re_buf[counter] = (unsigned char)sserial.read();
     if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
+    Serial.print(Re_buf[counter],HEX);Serial.print("  ");
     counter++;
     if (counter == 11)          //接收到11个数据
     {
@@ -323,7 +329,7 @@ void serialEvent() {
   Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
 }
 
-void simplify(String *s){
+void Gesture::simplify(String *s){
   int len=s->length();
   int * f=(int *)malloc(6*sizeof(int));
   char * c=(char *)malloc(len*sizeof(char));
