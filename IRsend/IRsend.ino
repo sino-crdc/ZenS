@@ -22,12 +22,12 @@ void setup()
       Serial.println("SD initialization failed!");
     }
   Serial.println("SD initialization done");
-  myFile=SD.open("acc.txt",FILE_READ);
+  myFile=SD.open("ac.txt",FILE_READ);
   if(myFile){
     Serial.println("convertion begin");
     while(myFile.available()){
-        //cc[lencc++]=(char)myFile.read();
-        //Serial.print(cc[lencc-1]);
+        cc[lencc++]=(char)myFile.read();
+        Serial.print(cc[lencc-1]);
         if(cc[lencc-1]==':'){
             lencc--;
             len=tonum()-1;
@@ -48,11 +48,11 @@ void setup()
           }
       }
   }
-  //Serial.println();
+  Serial.println();
   myFile.close();
-  //for(int i=0;i<len-1;i++)
-    //Serial.print(a[i]),Serial.print(',');
-  //Serial.println();
+  for(int i=0;i<len-1;i++)
+    Serial.print(a[i]),Serial.print(',');
+  Serial.println();
 }
 
 void loop()

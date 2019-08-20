@@ -34,16 +34,16 @@ void setup()
 
   // open a new file 
   Serial.println("Creating my documents...");
-  if(SD.exists("acc.txt"))
-    SD.remove("acc.txt");
-  myFile=SD.open("acc.txt",FILE_WRITE);
+  if(SD.exists("ac.txt"))
+    SD.remove("ac.txt");
+  myFile=SD.open("ac.txt",FILE_WRITE);
   Serial.println("my_documents is created");
-  Serial.println(SD.exists("acc.txt"));
+  Serial.println(SD.exists("ac.txt"));
   myFile.close();
 }
 
 void loop() {
-  myFile=SD.open("acc.txt",FILE_WRITE);
+  myFile=SD.open("ac.txt",FILE_WRITE);
   if(myFile){
       if (irrecv.decode(&results)) {
            Serial.println("Received a code, saving as raw");
@@ -52,7 +52,7 @@ void loop() {
       delay(1000);
       }
    myFile.close();
-   myFile=SD.open("acc.txt",FILE_READ);      
+   myFile=SD.open("ac.txt",FILE_READ);      
    while(myFile.available())
     Serial.print((char)myFile.read());
    Serial.println();
