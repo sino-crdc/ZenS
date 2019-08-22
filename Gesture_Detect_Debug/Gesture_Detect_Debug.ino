@@ -1,11 +1,11 @@
 #include <SoftwareSerial.h>
 
-#define DAXTHRESHOLD 0.75//x轴加速度可标志临界变化量
-#define DAYTHRESHOLD 2.00//y轴加速度可标志临界变化量
-#define DAZTHRESHOLD 2.00//z轴加速度可标志临界变化量
-#define ABSOLU_XA0 0.1//x轴绝对初始加速度
-#define ABSOLU_YA0 0.1//y轴绝对初始加速度
-#define ABSOLU_ZA0 1.1//z轴绝对初始加速度
+#define DAXTHRESHOLD 0.5//x轴加速度可标志临界变化量
+#define DAYTHRESHOLD 0.5//y轴加速度可标志临界变化量
+#define DAZTHRESHOLD 0.5//z轴加速度可标志临界变化量
+#define ABSOLU_XA0 0.975//x轴绝对初始加速度
+#define ABSOLU_YA0 -1.06//y轴绝对初始加速度
+#define ABSOLU_ZA0 1.03//z轴绝对初始加速度
 #define ABSOLU_ANGLE0 0.0//初始绝对角度
 #define WTHRESHOLD 50.0//角速度最大有效值
 #define QUANTITY_AXE 'x'
@@ -17,7 +17,7 @@
 
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
-static unsigned char wait = 50;
+//static unsigned char wait = 50;
 static bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
 static bool qfirst = true;
 static float a[3], w[3], angle[3];
@@ -31,24 +31,43 @@ void quantity_detect();
 void simplify(String*);
 
 void setup(){
-  Serial.begin(115200);
+  Serial.begin(4800);
   Serial.println("initializing...");
   
   sserial.begin(9600);
-  Serial.println("baud rate：9600");
+  Serial.println("baud rate：115200");
+
+  byte baud[3] = {0xFF,0xAA,0x63};
+  for(int i = 0; i<3; i++){
+    sserial.write(baud[i]);
+  }
+  Serial.println("baud rate 115200, return rate 100Hz.");
+  sserial.begin(115200);
   
-  char vertical[3] = {0xFF,0xAA,0x66};
-  sserial.write(vertical,3);
+  byte vertical[3] = {0xFF,0xAA,0x66};
+  for(int i = 0; i<3; i++){
+    sserial.write(vertical[i]);
+  }
   Serial.println("Vertical installation.");
   
-  char communication[3]={0xFF,0xAA,0x61};
-  sserial.write(communication,3);
+  byte communication[3]={0xFF,0xAA,0x61};
+  for(int i = 0; i<3; i++){
+    sserial.write(communication[i]);
+  }
   Serial.println("set to serial communicaiton.");
-  
-  char baud[3] = {0xFF,0xAA,0x64};
-  sserial.write(baud,3);
-  Serial.println("baud rate 9600, return rate 20Hz.");
-  
+
+  byte zzero[3]={0xFF,0xAA,0x52};
+  for(int i = 0; i<3; i++){
+    sserial.write(zzero[i]);
+  }
+  Serial.println("z-zeroing");
+    
+  byte acheck[3]={0xFF,0xAA,0x67};
+  for(int i = 0; i<3; i++){
+    sserial.write(acheck[i]);
+  }
+  Serial.println("A-calibration");
+
   pinMode(BUTTON, INPUT);
 }
 
@@ -71,6 +90,17 @@ String detect() {
   Serial.println("gesture detecting...");
   String equation = "";
   while (isPressing()) {
+    byte zzero[3]={0xFF,0xAA,0x52};
+    for(int i = 0; i<3; i++){
+      sserial.write(zzero[i]);
+    }
+    Serial.println("z-zeroing");
+    
+    byte acheck[3]={0xFF,0xAA,0x67};
+    for(int i = 0; i<3; i++){
+      sserial.write(acheck[i]);
+    }
+    Serial.println("A-calibration");
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
@@ -131,11 +161,6 @@ String detect() {
         Serial.println(equation);
       }
     }
-    char zzero[3]={0xFF,0xAA,0x52};
-    sserial.write(zzero,3);
-    
-    char acheck[3]={0xFF,0xAA,0x67};
-    sserial.write(acheck,3);
   }
 
   first = true;
@@ -195,7 +220,6 @@ void quantity_detect() {
 void serialEvent() {
   while (sserial.available()) { 
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
-    Serial.println("available.");
     Re_buf[counter] = (unsigned char)sserial.read();
     if (counter == 0 && Re_buf[0] != 0x55) continue; //第0号数据不是帧头
     counter++;
