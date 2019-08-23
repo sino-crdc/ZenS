@@ -6,6 +6,11 @@
 
 #include "Order.h"
 
+union xx{               //用于读取文件中的数据；
+    unsigned int num=0;
+    byte buf[2];
+};
+
 Order::Order(Device* device, String orderType)
 {
   this->device = device;
@@ -55,38 +60,29 @@ void Order::setCode()
           //比对orderType
           if (data.equals(this->orderType)) { //如果匹配成功，加载code并退出
             file.read();//丢弃'#'
-
-            char* by_coding_o = new char[10];
-            unsigned int * int_coding_o = new int[243]; 
+            union xx code;
+            unsigned int * int_coding_o = new unsigned int[243];
+            int len=0; 
             for(int i=0;i<243;i++)
               int_coding_o[i]=0;
-            //for (int j = 0; char(file.peek()) != '#'; j++) {
-            //  by_coding_o[j] = char(file.read());
-            //}
-            int lc=0,len=0;
-            while(char(file.peek())!='#'){
-                by_coding_o[lc++]=file.read();
-                if(by_coding_o[lc-1]==','){
-                    for(int i=0;i<lc-1;i++)
-                      int_coding_o[len]=int_coding_o[len]*10+by_coding_o[i]-'0';
-                    lc=0,len++;
-                  }
+            while(file.available()){
+                code.buf[1]=file.read();
+                code.buf[0]=file.read();
+                if(code.buf[0]=='#'||code.buf[1]=='#')
+                  break;
+                else
+                  int_coding_o[len++]=code.num;
               }
-            for(int i=0; i<lc;i++)
-              int_coding_o[len]=int_coding_o[len]*10+by_coding_o[i]-'0';
-            len++;
-            //int* temp_p = int_coding_o;
-            //int* int_coding_o = (int*)by_coding_o;
-            Serial.print("! ");
-            for(int j = 0;j < 243; j++){
-              Serial.print(int_coding_o[j]),Serial.print(" ");
-              this->coding.buf[j] = int_coding_o[j];
+            Serial.println(len);
+            for(int i=0;i<len;i++){
+              this->coding.buf[i]=int_coding_o[i];
+              Serial.print(int_coding_o[i]),Serial.print(" ");
             }
             Serial.println();
+            //int* temp_p = int_coding_o;
+            //int* int_coding_o = (int*)by_coding_o;
             this->coding.len = len;
             this->coding.hz = 38;
-            //delete [] temp_p;
-            delete [] by_coding_o;
             delete [] int_coding_o;
             break;
           } else { //如果匹配失败，则继续读到\n后
