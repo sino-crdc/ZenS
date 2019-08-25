@@ -8,7 +8,7 @@
 
 #include "Setting.h"
 #include "Order.h"
-#include <IRremote.h>
+#include <IRremote2.h>
 
 class Controler {
   private:

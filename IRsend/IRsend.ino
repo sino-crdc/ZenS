@@ -1,7 +1,7 @@
 /*
  * 暂时只发射一个指令
  */
-#include <IRremote.h>
+#include "IRremote2.h" 
 #include <SPI.h>
 #include <SD.h>//引入
 
@@ -19,7 +19,7 @@ void setup()
 {
   pinMode(53,OUTPUT);
   Serial.begin(115200);
-  if(!SD.begin(53)){
+  if(!SD.begin(4)){
       Serial.println("SD initialization failed!");
       while(1);
     }
