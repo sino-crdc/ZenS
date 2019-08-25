@@ -67,7 +67,7 @@ void setup() {
 void loop() {
   //Serial.println("final equation: " + detect());
 
-    detect();
+  detect();
 
   //  while(isPressing()){
   //    serialEvent();
@@ -82,6 +82,9 @@ bool isPressing() {
 String detect() {
   Serial.println("gesture detecting...");
   String equation = "";
+  float xa0 = ABSOLU_XA0;
+  float ya0 = ABSOLU_YA0;
+  float za0 = ABSOLU_ZA0;
   while (isPressing()) {
     if (cfirst) {
       byte zzero[3] = {0xFF, 0xAA, 0x52};
@@ -125,10 +128,6 @@ String detect() {
         continue;
       }
 
-      float xa0 = ABSOLU_XA0;
-      float ya0 = ABSOLU_YA0;
-      float za0 = ABSOLU_ZA0;
-
       if (first) { //设置加速度初始值
         //        Serial.println("acceleration initial set.");
         xa0 = a[0];
@@ -142,40 +141,40 @@ String detect() {
         //        Serial.println(" ");
         first = false;
         //Serial.println("xa0: " + String(xa0) + " ya0: " + String(ya0) + " za0: " + String(za0));
-        //delay(2000);
+        delay(4);
       } else {
         //转换数据信号为手势表达式元素
-                String tx = "";
-                String ty = "";
-                String tz = "";
-                if (a[0] - xa0 > DAXTHRESHOLD) {
-                  //          Serial.print(a[0]-xa0);
-                  //          Serial.print(" ");
-                  tx = "x+";
-                }
-                if (xa0 - a[0] > DAXTHRESHOLD) {
-                  tx = "x-";
-                }
-                if (a[1] - ya0 > DAYTHRESHOLD) {
-                  //          Serial.print(a[1]-ya0);
-                  //          Serial.print(" ");
-                  ty = "y+";
-                }
-                if (ya0 - a[1] > DAYTHRESHOLD) {
-                  ty = "y-";
-                }
-                if (a[2] - za0 > DAZTHRESHOLD) {
-                  //          Serial.print(a[2]-za0);
-                  //          Serial.print(" ");
-                  tz = "z+";
-                }
-                if (za0 - a[2] > DAZTHRESHOLD) {
-                  tz = "z-";
-                }
-                equation = tx + ty + tz;
-                simplify(&equation);
-                //Serial.println(equation);
-        Serial.println("xa-xa0: " + String(a[0]-xa0) + " ya-ya0: " + String(a[1]-ya0) + " za-za0: " + String(a[2]-za0));
+        String tx = "";
+        String ty = "";
+        String tz = "";
+        if (a[0] - xa0 > DAXTHRESHOLD) {
+          //          Serial.print(a[0]-xa0);
+          //          Serial.print(" ");
+          tx = "x+";
+        }
+        if (xa0 - a[0] > DAXTHRESHOLD) {
+          tx = "x-";
+        }
+        if (a[1] - ya0 > DAYTHRESHOLD) {
+          //          Serial.print(a[1]-ya0);
+          //          Serial.print(" ");
+          ty = "y+";
+        }
+        if (ya0 - a[1] > DAYTHRESHOLD) {
+          ty = "y-";
+        }
+        if (a[2] - za0 > DAZTHRESHOLD) {
+          //          Serial.print(a[2]-za0);
+          //          Serial.print(" ");
+          tz = "z+";
+        }
+        if (za0 - a[2] > DAZTHRESHOLD) {
+          tz = "z-";
+        }
+        equation = tx + ty + tz;
+        simplify(&equation);
+        //Serial.println(equation);
+        Serial.println("xa-xa0: " + String(a[0] - xa0) + " ya-ya0: " + String(a[1] - ya0) + " za-za0: " + String(a[2] - za0));
       }
     }
   }
@@ -266,15 +265,15 @@ void serialEvent() {
     //char inChar = (char)Serial.read(); Serial.print(inChar); //Output Original Data, use this code
     Re_buf[counter] = (unsigned char)Serial1.read();
     if (counter == 0 && Re_buf[0] != 0x55) continue;//第0号数据不是帧头
-    if(counter<10)
+    if (counter < 10)
       sum += Re_buf[counter];
     counter++;
     if (counter == 11)          //接收到11个数据
     {
-//      sum &= 0xFF;
-//      Serial.print(sum,DEC);
-//      Serial.print(" ");
-//      Serial.println(Re_buf[counter-1]);
+      //      sum &= 0xFF;
+      //      Serial.print(sum,DEC);
+      //      Serial.print(" ");
+      //      Serial.println(Re_buf[counter-1]);
       delay(4);
       if (sum == Re_buf[counter - 1]) {
         //重新赋值，准备下一帧数据的接收
