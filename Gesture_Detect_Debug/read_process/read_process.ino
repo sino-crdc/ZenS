@@ -15,7 +15,6 @@
 #define WTHRESHOLD 500.0//角速度最大有效值
 #define QUANTITY_AXE 'x'
 
-
 #define GEST_RX_PIN 9
 #define GEST_TX_PIN 10
 #define BUTTON 13
@@ -272,7 +271,7 @@ void serialEvent() {
       break;
     }
   }
-  //  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
+  //  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度可能产生影响
 }
 
 void simplify(String *s) {
