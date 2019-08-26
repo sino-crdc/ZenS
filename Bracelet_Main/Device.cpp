@@ -13,22 +13,22 @@ Device::Device(String name, File infos,int orderNum){
 }
 
 String Device::getName(){
-  Serial.println("Device::getname");
+//  Serial.println("Device::getname");
   return this->name;
 }
 
 File Device::getInfos(){
-  Serial.println("Device::getInfos");
+//  Serial.println("Device::getInfos");
   return this->infos;
 }
 
 int Device::getOrderNum(){
-  Serial.println("Device::getOrderNum");
+//  Serial.println("Device::getOrderNum");
   return this->orderNum;
 }
 
 String* Device::getOrderTypes(){
-  Serial.println("Device::getOrderTypes");
+//  Serial.println("Device::getOrderTypes");
   if(this->orderTypes == NULL){
     complete();
   }
@@ -36,7 +36,7 @@ String* Device::getOrderTypes(){
 }
 
 Code* Device::getCodings(){
-  Serial.println("Device::getCodings");
+//  Serial.println("Device::getCodings");
   if(this->codings == NULL){
     complete();
   }
@@ -44,7 +44,7 @@ Code* Device::getCodings(){
 }
 
 Gest_Data* Device::getGestures(){
-  Serial.println("Device::getGestures");
+//  Serial.println("Device::getGestures");
   if(this->gestures == NULL){
     complete();
   }
