@@ -12,24 +12,27 @@ extern Device television;
 extern Device curtain;
 IRsend irsend;
 
-Controler::Controler() {Serial.println("controler constructed.");}
+Controler::Controler(){}
 
 void Controler::setButtonA(bool state)
 {
   buttonA = state;
-  Serial.println("buttonA == " + buttonA);
+//  Serial.println("buttonA == " + String(buttonA));
 }
 void Controler::setButtonB(bool state)
 {
   buttonB = state;
+//  Serial.println("buttonB == " + String(buttonB));
 }
 void Controler::setButtonC(bool state)
 {
   buttonC = state;
+//  Serial.println("buttonC == " + String(buttonC));
 }
 void Controler::setButtonD(bool state)
 {
   buttonD = state;
+//  Serial.println("buttonD == " + String(buttonD));
 }
 bool Controler::getButtonA()
 {
@@ -62,11 +65,11 @@ Device* Controler::device()
   Device* device = NULL;
   Serial.println("device == NULL");
   if (buttonA){
-    device = &air_conditioner;
-    Serial.println("device == air_conditioner");
+    device = &light;
+    Serial.println("device == light");
   }
   else if (buttonB)
-    device = &light;
+    device = &air_conditioner;
   else if (buttonC)
     device = &television;
   else if (buttonD)
@@ -98,21 +101,20 @@ bool Controler::isPressing()
 {
   Controler::detect();
   if (buttonA || buttonB || buttonC || buttonD) {
-    Serial.println("pressing.");
+//    Serial.println("pressing.");
     return true;
   }
   else {
-    Serial.println("not pressing.");
+//    Serial.println("not pressing.");
     return false;
   }
 }
 byte Controler::detect() {
-  Serial.println("detecting...");
+//  Serial.println("detecting...");
   if (digitalRead(BUTTONA_PIN) == HIGH) {
-    //Serial.println("A");
     setButtonA(true);
     digitalWrite(LEDA_PIN, HIGH);
-    Serial.println("ledA == HIGH");
+//    Serial.println("ledA == HIGH");
     return 1;
   }
   else {
@@ -121,26 +123,38 @@ byte Controler::detect() {
   }
 
   if (digitalRead(BUTTONB_PIN) == HIGH) {
-    //Serial.println("B");
     setButtonB(true);
+    digitalWrite(LEDB_PIN, HIGH);
+//    Serial.println("ledB == HIGH");
     return 2;
   }
-  else
+  else{
     setButtonB(false);
+    digitalWrite(LEDB_PIN, LOW);
+  }
+    
   if (digitalRead(BUTTONC_PIN) == HIGH) {
-    //Serial.println("C");
     setButtonC(true);
+    digitalWrite(LEDC_PIN, HIGH);
+//    Serial.println("ledC == HIGH");
     return 3;
   }
-  else
+  else{
     setButtonC(false);
+    digitalWrite(LEDC_PIN, LOW);
+  }
+    
     
   if (digitalRead(BUTTOND_PIN) == HIGH) {
-    //Serial.println("D");
     setButtonD(true);
+    digitalWrite(LEDD_PIN, HIGH);
+//    Serial.println("ledD == HIGH");
     return 4;
   }
-  else
+  else{
     setButtonD(false);
+    digitalWrite(LEDD_PIN, LOW);
+  }
+    
   return 0;
 }

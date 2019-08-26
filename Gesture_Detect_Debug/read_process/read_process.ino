@@ -28,7 +28,7 @@ void quantity_detect();
 void simplify(String*);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(4800);
   Serial.println("initializing...");
 
   Serial1.begin(9600);

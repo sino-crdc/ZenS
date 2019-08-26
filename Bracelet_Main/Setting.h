@@ -19,7 +19,7 @@
 #define RAY_PIN 7
 
 #define BUTTONA_PIN 25
-#define BUTTONB_PIN 36
+#define BUTTONB_PIN 26
 #define BUTTONC_PIN 27
 #define BUTTOND_PIN 28
 
