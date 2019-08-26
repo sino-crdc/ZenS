@@ -5,7 +5,7 @@
 #endif
 
 #include "Setting.h"
-#include <IRremote.h>
+#include <IRremote2.h>
 #include <SD.h>
 #include "Device.h"
 #include "Gesture.h"
@@ -64,7 +64,7 @@ void loop() {
             Device* device_now = controler.device();
             Gesture gesture0 = Gesture(device_now);
 //            do {
-            gesture0.quantity_detect(order)));//包含命令发送
+            gesture0.quantity_detect(order);//包含命令发送
 //            } while ( controler.isPressing() && pin1 == pin0); //如果按键按下并且是相同设备
             //Device派生类成员变量的动态存储撤销
             delete [] device_now->getOrderTypes();
