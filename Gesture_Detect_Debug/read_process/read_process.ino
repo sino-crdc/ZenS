@@ -12,14 +12,10 @@
 #define WTHRESHOLD 500.0//角速度最大有效值
 #define QUANTITY_AXE 'x'
 
-
-#define GEST_RX_PIN 9
-#define GEST_TX_PIN 10
 #define BUTTON 13
 
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
-//static unsigned char wait = 50;
 static bool first = true;//用于定性检测函数，是否是第一次传回加速度数据，用来判断以设置加速度初始值
 static bool qfirst = true;
 static bool cfirst = true;//用于初次校准
@@ -171,7 +167,7 @@ String detect() {
         if (za0 - a[2] > DAZTHRESHOLD) {
           tz = "z-";
         }
-        equation = tx + ty + tz;
+        equation += tx + ty + tz;
         simplify(&equation);
         //Serial.println(equation);
         Serial.println("xa-xa0: " + String(a[0] - xa0) + " ya-ya0: " + String(a[1] - ya0) + " za-za0: " + String(a[2] - za0));
@@ -187,7 +183,7 @@ String detect() {
 
 void quantity_detect() {
   Serial.println("quantity gesture detecting...");
-
+  float angle0 = ABSOLU_ANGLE0;
   while (isPressing()) {
     //获取数据
     if (cfirst) {
@@ -213,13 +209,12 @@ void quantity_detect() {
     if (sign) { //若收到数据信号
       //      Serial.println("get sign.");
       sign = 0;
-      float angle0 = ABSOLU_ANGLE0;
       //解析数据信号
       if (Re_buf[0] == 0x55
           && Re_buf [1] == 0x53) { //检查帧头，识别到角度包
         //        Serial.println("Angle package gotten.");
         angle[QUANTITY_AXE - 120] = (short(Re_buf [(QUANTITY_AXE - 120) * 2 + 3] << 8 | Re_buf [(QUANTITY_AXE - 120) * 2 + 2])) / 32768.0 * 180;
-        if (qfirst) { //设置角速度初始值
+        if (qfirst) { //设置角度初始值
           //          Serial.print("set angle initial:");
           angle0 = angle[QUANTITY_AXE - 120];
           //          Serial.println(angle0);
@@ -284,7 +279,7 @@ void serialEvent() {
     }
     //    Serial.println(sign);
   }
-  //  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度产生较大影响
+  //  Serial.println("JY61 package reading end.");//这个以及其他一系列的Serail调试信息输出占用很大一块儿时间，对帧传输的灵敏度可能产生影响
 }
 
 void simplify(String *s) {
