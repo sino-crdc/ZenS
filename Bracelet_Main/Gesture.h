@@ -13,7 +13,6 @@
 #include "Order.h"
 #include "Controler.h"
 #include <math.h>
-#include <SoftwareSerial.h>
 
 class Gesture{
  public:
