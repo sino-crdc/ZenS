@@ -73,12 +73,12 @@ void Order::setCode()
                 else
                   int_coding_o[len++]=code.num;
               }
-            Serial.println(len);
+//            Serial.println(len);
             for(int i=0;i<len;i++){
               this->coding.buf[i]=int_coding_o[i];
-              Serial.print(int_coding_o[i]),Serial.print(" ");
+//              Serial.print(int_coding_o[i]),Serial.print(" ");
             }
-            Serial.println();
+//            Serial.println();
             //int* temp_p = int_coding_o;
             //int* int_coding_o = (int*)by_coding_o;
             this->coding.len = len;
