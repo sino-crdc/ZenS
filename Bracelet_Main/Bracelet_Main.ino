@@ -11,6 +11,7 @@
 #include "Gesture.h"
 #include "Order.h"
 #include "Controler.h"
+//todo: 关于struct的指针化，String的问题(string、String.h)
 
 Controler controler;
 
@@ -19,9 +20,9 @@ Device light = Device("Light", File(SdFile(), "Light.txt"), LIGHT_ORDER_NUM);
 Device television = Device("Tele", File(SdFile(), "Tele.txt"), TELE_ORDER_NUM);
 Device curtain = Device("Curtain", File(SdFile(), "Curtain.txt"), CURTAIN_ORDER_NUM);
 
-//todo: 关于struct的指针化，String的问题(string、String.h)
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  Serial.println("setup begin.");
   controler.initial();
   Gesture::initial();
   pinMode(BUTTONA_PIN, INPUT);

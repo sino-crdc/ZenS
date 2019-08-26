@@ -12,7 +12,7 @@ extern Device television;
 extern Device curtain;
 IRsend irsend;
 
-Controler::Controler() {Serial.println("controler constructed.");}
+Controler::Controler() {}//Serial.println("controler constructed.");}
 
 void Controler::setButtonA(bool state)
 {

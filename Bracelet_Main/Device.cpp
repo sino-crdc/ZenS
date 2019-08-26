@@ -10,6 +10,7 @@ Device::Device(String name, File infos,int orderNum){
   this->name = name;
   this->infos = infos;
   this->orderNum = orderNum;
+  Serial.println("device constructed.");
 }
 
 String Device::getName(){

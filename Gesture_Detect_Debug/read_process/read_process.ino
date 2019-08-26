@@ -12,7 +12,7 @@
 #define WTHRESHOLD 500.0//角速度最大有效值
 #define QUANTITY_AXE 'x'
 
-#define BUTTON 13
+#define BUTTON 25
 
 static unsigned char Re_buf[11], counter = 0;
 static unsigned char sign = 0;
@@ -28,7 +28,7 @@ void quantity_detect();
 void simplify(String*);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(4800);
   Serial.println("initializing...");
 
   Serial1.begin(9600);
