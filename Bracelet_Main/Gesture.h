@@ -23,7 +23,7 @@ class Gesture{
     Gest_Data* getGest_data();
     Gest_Data* detect();
     Order* analyze(Gest_Data* gest_data);
-    Gest_Quantity_Data* quantity_detect(Order* order);
+    void quantity_detect(Order* order);
     Order* quantity_analyze(Gest_Quantity_Data* gest_quantity_data);
 
   private:

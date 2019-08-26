@@ -54,37 +54,26 @@ void loop() {
       Serial.println("order is not NULL");
       if (!order->getIsQuantity()) {
         controler.send(order);
-        Serial.println("order not isQuantity finish");
+        Serial.println("order which is not Quantity finish");
       }else{
         unsigned long time0 = millis();//开始计时
         while (millis() - time0 < 10000L) { //小于十秒
-
-          bool fly = false;//用于后续嵌套循环的双跳
-
           byte pin1 = controler.detect();
           Serial.println("pin1 detect: "+pin1);
           if(controler.isPressing() && pin1 == pin0){//如果按键按下并且是相同设备
             Device* device_now = controler.device();
             Gesture gesture0 = Gesture(device_now);
-            do {
-              controler.send(gesture0.quantity_analyze(gesture0.quantity_detect(order)));
-              byte pin1 = controler.detect();
-              Serial.println("pin1 detect: "+pin1);
-              if(!(controler.isPressing() && pin1 == pin0)){
-                fly = true;//“要跳出去啦啦啦~”
-                break;//跳出内层
-              }
-            } while ( controler.isPressing() && pin1 == pin0); //如果按键按下并且是相同设备
+//            do {
+            gesture0.quantity_detect(order)));//包含命令发送
+//            } while ( controler.isPressing() && pin1 == pin0); //如果按键按下并且是相同设备
             //Device派生类成员变量的动态存储撤销
             delete [] device_now->getOrderTypes();
             delete [] device_now->getCodings();
             delete [] device_now->getGestures();
-          }
-          if (fly) { //“啊，我终于要跳出去啦啦啦~”
-            break;//跳出外层
+            Serial.println("order which is Quantity send finish");
+            break;
           }
         }
-        Serial.println("order isQuantity finish");
       }
     }
     controler.terminate();
