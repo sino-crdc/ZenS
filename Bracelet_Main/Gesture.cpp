@@ -262,6 +262,7 @@ Order *Gesture::analyze(Gest_Data *gest_data) {
 
 void Gesture::quantity_detect(Order *order) {
     Serial.println("quantity gesture detecting...");//todo master
+    float angle0 = ABSOLU_ANGLE0;
     while (controler.isPressing()) {
         if (cfirst) {
             byte zzero[3] = {0xFF, 0xAA, 0x52};
@@ -326,7 +327,8 @@ void Gesture::quantity_detect(Order *order) {
                 float deviation = angle[QUANTITY_AXE - 120] - angle0;
                 deviation = deviation < -10.0 ? 180.0 + deviation : deviation;
                 //发送角度
-                controler.send(this->quantity_analyze(Gest_Quantity_Data(deviation, order, this->device)));
+                Gest_Quantity_Data temp_qgest = Gest_Quantity_Data(deviation, order, this->device);
+                controler.send(this->quantity_analyze(&temp_qgest));
 //                Serial.println("get_gest_quantity_order: as above.");
             }
         }
