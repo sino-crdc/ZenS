@@ -86,28 +86,29 @@ Gest_Data *Gesture::detect() {
   float ya0 = ABSOLU_YA0;
   float za0 = ABSOLU_ZA0;
   while (controler.isPressing()) {
-    if (cfirst) {
-//      byte zzero[3] = {0xFF, 0xAA, 0x52};
-//      for (int i = 0; i < 3; i++) {
-//        Serial1.write(zzero[i]);
-//      }
-//      for (int i = 0; i < 3; i++) {
-//        Serial1.write(zzero[i]);
-//      }
-//      //    Serial.println("z-zeroing");
-//
-//      byte acheck[3] = {0xFF, 0xAA, 0x67};
-//      for (int i = 0; i < 3; i++) {
-//        Serial1.write(acheck[i]);
-//      }
-//      for (int i = 0; i < 3; i++) {
-//        Serial1.write(acheck[i]);
-//      }
-//      //    Serial.println("A-calibration");
+      //    if (cfirst) {
+      //      byte zzero[3] = {0xFF, 0xAA, 0x52};
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(zzero[i]);
+      //      }
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(zzero[i]);
+      //      }
+      //      //    Serial.println("z-zeroing");
+      //
+      //      byte acheck[3] = {0xFF, 0xAA, 0x67};
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(acheck[i]);
+      //      }
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(acheck[i]);
+      //      }
+            //    Serial.println("A-calibration");
+      
+      //      cfirst = false;
+            //delay(2000);
+      //    }
 
-      cfirst = false;
-      //delay(2000);
-    }
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
@@ -134,35 +135,18 @@ Gest_Data *Gesture::detect() {
         Serial.println("xa0:" + String(xa0) + " ya0:" + String(ya0) + " za0:" + String(za0));
       } else {
         //转换数据信号为手势表达式元素
-        String tx = "";
-        String ty = "";
-        String tz = "";
-        if (a[0] - xa0 > DAXTHRESHOLD) {
-          //                              Serial.print(a[0]-xa0);
-          //                              Serial.print(" ");
-          tx = "x+";
-        }
-        if (xa0 - a[0] > DAXTHRESHOLD) {
-          tx = "x-";
-        }
-        if (a[1] - ya0 > DAYTHRESHOLD) {
-          //                              Serial.print(a[1]-ya0);
-          //                              Serial.print(" ");
-          ty = "y+";
-        }
-        if (ya0 - a[1] > DAYTHRESHOLD) {
-          ty = "y-";
-        }
-        if (a[2] - za0 > DAZTHRESHOLD) {
-          //                              Serial.print(a[2]-za0);
-          //                              Serial.print(" ");
-          tz = "z+";
-        }
-        if (za0 - a[2] > DAZTHRESHOLD) {
-          tz = "z-";
-        }
+        String t = "";
+         switch(pos_axe(xa0, ya0, za0)){
+          case 1: t = "x+";break;
+          case 2: t = "y+";break;
+          case 3: t = "z+";break;
+          case -1: t = "x-";break;
+          case -2: t = "y-";break;
+          case -3: t = "z-";break;
+          case 0: t = "";
+         }
         Serial.println("xa:" + String(a[0]) + " ya:" + String(a[1]) + " za:" + String(a[2]));
-        equation += tx + ty + tz;
+        equation += t;
         simplify(&equation);
         //Serial.println("gesture recorded: " + equation);
       }
@@ -170,7 +154,7 @@ Gest_Data *Gesture::detect() {
   }
 
   first = true;
-  cfirst = true;
+//  cfirst = true;
 
   static Gest_Data t_gest = Gest_Data(equation, this->device);
   t_gest = Gest_Data(equation, this->device);//tododuan
@@ -267,31 +251,31 @@ void Gesture::quantity_detect(Order *order) {
   Serial.println("quantity gesture detecting...");//todo master
   float angle0 = ABSOLU_ANGLE0;
   while (controler.isPressing()) {
-    if (cfirst) {
-      byte zzero[3] = {0xFF, 0xAA, 0x52};
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(zzero[i]);
-      }
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(zzero[i]);
-      }
-      //    Serial.println("z-zeroing");
-
-      byte acheck[3] = {0xFF, 0xAA, 0x67};
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(acheck[i]);
-      }
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(acheck[i]);
-      }
-      //    Serial.println("A-calibration");
-
-      cfirst = false;
-    }
+      //    if (cfirst) {
+      //      byte zzero[3] = {0xFF, 0xAA, 0x52};
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(zzero[i]);
+      //      }
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(zzero[i]);
+      //      }
+      //      //    Serial.println("z-zeroing");
+      //
+      //      byte acheck[3] = {0xFF, 0xAA, 0x67};
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(acheck[i]);
+      //      }
+      //      for (int i = 0; i < 3; i++) {
+      //        Serial1.write(acheck[i]);
+      //      }
+      //      //    Serial.println("A-calibration");
+      //
+      //      cfirst = false;
+      //    }
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
-      //            Serial.println("get sign.");
+                                           //   Serial.println("get sign.");
       sign = 0;
       //解析数据信号
       if (Re_buf[0] == 0x55
@@ -305,7 +289,7 @@ void Gesture::quantity_detect(Order *order) {
           angle0 = angle[QUANTITY_AXE - 120];
           qfirst = false;
         }
-      }
+    }
       //            else if (Re_buf[0] == 0x55
       //                       && Re_buf[1] == 0x52) { //检查帧头，识别到角速度包
       //                Serial.println("w package gotten.");
@@ -323,7 +307,7 @@ void Gesture::quantity_detect(Order *order) {
         continue;
       }
 
-      //            if (!qfirst && abs(w[QUANTITY_AXE - 120]) < WTHRESHOLD) {
+                                              //  if (!qfirst && abs(w[QUANTITY_AXE - 120]) < WTHRESHOLD) {
       if (!qfirst) {
         //计算角度偏离量
         //                Serial.println("angle deviation calculating...");
@@ -336,7 +320,7 @@ void Gesture::quantity_detect(Order *order) {
       }
     }
   }
-  cfirst = true;
+//  cfirst = true;
   qfirst = true;
 }
 
@@ -454,4 +438,66 @@ void Gesture::simplify(String *s) {
   }
   free(f);
   free(c);
+}
+
+/**
+* 返回1/2/3/-1/-2/-3分别对应x+/y+/z+/x-/y-/z-, 返回0为全阴性或者无法判断
+*/
+byte Gesture::pos_axe(float xa0, float ya0, float za0){
+  adx = abs(a[0]-xa0);
+  ady = abs(a[1]-ya0);
+  adz = abs(a[2]-za0);
+
+  // 三轴变化都小于阈值，没有阳性轴
+  if(adx < DAXTHRESHOLD && ady < DAYTHRESHOLD && adz < DAZTHRESHOLD){
+      return 0;
+  }
+  //有且只有一轴变化大等于阈值，直接返回该轴
+  else if (adx < DAXTHRESHOLD && ady < DAYTHRESHOLD){
+      return a[2]-za0 > 0 ? 3 : -3;
+  }else if (ady < DAYTHRESHOLD && adz < DAZTHRESHOLD){
+      return a[0]-xa0 > 0 ? 1 : -1;
+  }else if(adx < DAXTHRESHOLD && adz < DAZTHRESHOLD){
+      return a[1]-ya0 > 0 ? 2 : -2;
+  }
+  //有且只有两轴变化大等于阈值，做出判断
+  else if (adx < DAXTHRESHOLD){
+      if(ady > adz){
+        return a[1]-ya0 > 0 ? 2 : -2;
+      }else if(ady < adz){
+        return a[2]-za0 > 0 ? 3 : -3;
+      }else{
+        return 0;
+      }
+  }else if (ady < DAYTHRESHOLD){
+    if(adx > adz){
+      return a[0]-xa0 > 0 ? 1 : -1;
+    }else if(adx < adz){
+      return a[2]-za0 > 0 ? 3 : -3;
+    }else{
+      return 0;
+    }
+  }else if (adz < DAZTHRESHOLD){
+    if(adx > ady){
+      return a[0]-xa0 > 0 ? 1 : -1;
+    }else if(adx < ady){
+      return a[1]-ya0 > 0 ? 2 : -2;
+    }else{
+      return 0;
+    }
+  }
+  //全部轴变化大等于阈值，做出判断
+  else{
+    if(adx == ady && ady == adz){//如果三个值相等
+      return 0;
+    }else if(adx > ady && adx > adz){
+      return a[0]-xa0 > 0 ? 1 : -1;
+    }else if(ady > adx && ady > adz){
+      return a[1]-ya0 > 0 ? 2 : -2;
+    }else if (adz > adx && adz > ady){
+      return a[2]-za0 > 0 ? 3 : -3;
+    }else{
+      return 0;
+    }
+  }
 }
