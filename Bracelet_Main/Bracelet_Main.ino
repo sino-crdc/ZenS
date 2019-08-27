@@ -11,7 +11,6 @@
 #include "Gesture.h"
 #include "Order.h"
 #include "Controler.h"
-//todo: 关于struct的指针化，String的问题(string、String.h)
 
 Controler controler;
 
@@ -22,7 +21,6 @@ Device curtain = Device("Curtain", File(SdFile(), "Curtain.txt"), CURTAIN_ORDER_
 
 void setup() {
   Serial.begin(4800);
-  //Serial.println("setup begin.");
   controler.initial();
   Gesture::initial();
   pinMode(BUTTONA_PIN, INPUT);
@@ -37,13 +35,10 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("loop begin");
   byte pin0 = controler.detect();//第一次按下的按键
   if (controler.isPressing()) {
-//    Serial.println("in the work body.");
     Device* device = controler.device();
     if (device == NULL) {
-      Serial.println("device == NULL");
       return;
     }
     if (device != NULL) {

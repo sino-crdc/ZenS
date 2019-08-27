@@ -26,7 +26,7 @@ static bool first = true;//用于定性检测函数，是否是第一次传回�
 static bool qfirst = true;
 static bool cfirst = true;//用于初次校准
 static float a[3], w[3], angle[3];
-byte f[6]={0};
+byte f[6] = {0};
 char c[15];
 
 Gesture::Gesture(Device *device) {

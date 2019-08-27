@@ -54,23 +54,26 @@ Gest_Data* Device::getGestures() {
 
 void Device::complete() {
   Serial.println("Device::complete");
-  if (SD.begin(SD_PIN)) {
-    if (this->infos = SD.open(this->infos.name(), FILE_READ)) {
+
+  if(SD.begin(SD_PIN)){
+    if(this->infos = SD.open(this->infos.name(),FILE_READ)){
       const int num = this->orderNum;
       this->orderTypes = new String[num];
       this->codings = new Code[num];
       this->gestures = new Gest_Data[num];
-      for (int i = 0; this->infos.available() && i < num; i++) {
 
+      for (int i = 0; this->infos.available() && i < num; i++) {
         //获取第i个orderType
 
         String data = "";
 
         while (this->infos.peek() != 0xFF) {
+
           data += char(this->infos.read());
         }
         this->orderTypes[i] = data;
         this->infos.read();//丢弃0xFF
+        Serial.println(this->orderTypes[i]);
 
 
         //获取第i个coding
@@ -121,7 +124,6 @@ void Device::complete() {
         this->gestures[i].device = this;
         this->infos.read();//抛弃\r
         this->infos.read();//抛弃\n
-
       }
     }
     this->infos.close();
