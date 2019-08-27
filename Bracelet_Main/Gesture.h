@@ -31,6 +31,8 @@ class Gesture{
     
     void serialEvent();
     void simplify(String *s);
+    byte pos_axe(float, float, float);
+    
 };
 
 #endif
