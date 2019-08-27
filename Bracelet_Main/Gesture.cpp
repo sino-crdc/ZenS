@@ -86,28 +86,28 @@ Gest_Data *Gesture::detect() {
   float ya0 = ABSOLU_YA0;
   float za0 = ABSOLU_ZA0;
   while (controler.isPressing()) {
-    if (cfirst) {
-      byte zzero[3] = {0xFF, 0xAA, 0x52};
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(zzero[i]);
-      }
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(zzero[i]);
-      }
-      //    Serial.println("z-zeroing");
-
-      byte acheck[3] = {0xFF, 0xAA, 0x67};
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(acheck[i]);
-      }
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(acheck[i]);
-      }
-      //    Serial.println("A-calibration");
-
-      cfirst = false;
-      //delay(2000);
-    }
+                                                    //    if (cfirst) {
+                                                    //      byte zzero[3] = {0xFF, 0xAA, 0x52};
+                                                    //      for (int i = 0; i < 3; i++) {
+                                                    //        Serial1.write(zzero[i]);
+                                                    //      }
+                                                    //      for (int i = 0; i < 3; i++) {
+                                                    //        Serial1.write(zzero[i]);
+                                                    //      }
+                                                    //      //    Serial.println("z-zeroing");
+                                                    //
+                                                    //      byte acheck[3] = {0xFF, 0xAA, 0x67};
+                                                    //      for (int i = 0; i < 3; i++) {
+                                                    //        Serial1.write(acheck[i]);
+                                                    //      }
+                                                    //      for (int i = 0; i < 3; i++) {
+                                                    //        Serial1.write(acheck[i]);
+                                                    //      }
+                                                          //    Serial.println("A-calibration");
+                                                    
+                                                    //      cfirst = false;
+                                                          //delay(2000);
+                                                    //    }
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
@@ -170,7 +170,7 @@ Gest_Data *Gesture::detect() {
   }
 
   first = true;
-  cfirst = true;
+//  cfirst = true;
 
   static Gest_Data t_gest = Gest_Data(equation, this->device);
   t_gest = Gest_Data(equation, this->device);//tododuan
@@ -267,31 +267,31 @@ void Gesture::quantity_detect(Order *order) {
   Serial.println("quantity gesture detecting...");//todo master
   float angle0 = ABSOLU_ANGLE0;
   while (controler.isPressing()) {
-    if (cfirst) {
-      byte zzero[3] = {0xFF, 0xAA, 0x52};
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(zzero[i]);
-      }
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(zzero[i]);
-      }
-      //    Serial.println("z-zeroing");
-
-      byte acheck[3] = {0xFF, 0xAA, 0x67};
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(acheck[i]);
-      }
-      for (int i = 0; i < 3; i++) {
-        Serial1.write(acheck[i]);
-      }
-      //    Serial.println("A-calibration");
-
-      cfirst = false;
-    }
+                                                  //    if (cfirst) {
+                                                  //      byte zzero[3] = {0xFF, 0xAA, 0x52};
+                                                  //      for (int i = 0; i < 3; i++) {
+                                                  //        Serial1.write(zzero[i]);
+                                                  //      }
+                                                  //      for (int i = 0; i < 3; i++) {
+                                                  //        Serial1.write(zzero[i]);
+                                                  //      }
+                                                  //      //    Serial.println("z-zeroing");
+                                                  //
+                                                  //      byte acheck[3] = {0xFF, 0xAA, 0x67};
+                                                  //      for (int i = 0; i < 3; i++) {
+                                                  //        Serial1.write(acheck[i]);
+                                                  //      }
+                                                  //      for (int i = 0; i < 3; i++) {
+                                                  //        Serial1.write(acheck[i]);
+                                                  //      }
+                                                  //      //    Serial.println("A-calibration");
+                                                  //
+                                                  //      cfirst = false;
+                                                  //    }
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
-      //            Serial.println("get sign.");
+                                           //   Serial.println("get sign.");
       sign = 0;
       //解析数据信号
       if (Re_buf[0] == 0x55
@@ -306,24 +306,24 @@ void Gesture::quantity_detect(Order *order) {
           qfirst = false;
         }
       }
-      //            else if (Re_buf[0] == 0x55
-      //                       && Re_buf[1] == 0x52) { //检查帧头，识别到角速度包
-      //                Serial.println("w package gotten.");
-      //                w[QUANTITY_AXE - 120] =
-      //                        (short(Re_buf[(QUANTITY_AXE - 120) * 2 + 3] << 8 | Re_buf[(QUANTITY_AXE - 120) * 2 + 2])) /
-      //                        32768.0 * 2000;
-      //                //如果角速度太快则挂起程序
-      //                if (abs(w[QUANTITY_AXE - 120]) >= WTHRESHOLD) {
-      //                    Serial.println("w is too fast, hang the program.");
-      //                    qfirst = true;
-      //                    continue;
-      //                }
-      //            }
+                                          //            else if (Re_buf[0] == 0x55
+                                          //                       && Re_buf[1] == 0x52) { //检查帧头，识别到角速度包
+                                          //                Serial.println("w package gotten.");
+                                          //                w[QUANTITY_AXE - 120] =
+                                          //                        (short(Re_buf[(QUANTITY_AXE - 120) * 2 + 3] << 8 | Re_buf[(QUANTITY_AXE - 120) * 2 + 2])) /
+                                          //                        32768.0 * 2000;
+                                          //                //如果角速度太快则挂起程序
+                                          //                if (abs(w[QUANTITY_AXE - 120]) >= WTHRESHOLD) {
+                                          //                    Serial.println("w is too fast, hang the program.");
+                                          //                    qfirst = true;
+                                          //                    continue;
+                                          //                }
+                                          //            }
       else {
         continue;
       }
 
-      //            if (!qfirst && abs(w[QUANTITY_AXE - 120]) < WTHRESHOLD) {
+                                              //  if (!qfirst && abs(w[QUANTITY_AXE - 120]) < WTHRESHOLD) {
       if (!qfirst) {
         //计算角度偏离量
         //                Serial.println("angle deviation calculating...");
@@ -336,7 +336,7 @@ void Gesture::quantity_detect(Order *order) {
       }
     }
   }
-  cfirst = true;
+//  cfirst = true;
   qfirst = true;
 }
 
