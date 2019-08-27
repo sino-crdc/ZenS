@@ -63,9 +63,7 @@ void loop() {
             gesture0.quantity_detect(order);//包含命令发送
             //            } while ( controler.isPressing() && pin1 == pin0); //如果按键按下并且是相同设备
             //Device派生类成员变量的动态存储撤销
-            delete [] device_now->getOrderTypes();
-            delete [] device_now->getCodings();
-            delete [] device_now->getGestures();
+            device_now->three_clear();
             Serial.println("order which is Quantity send finish");
             break;
           }

@@ -21,6 +21,7 @@ class Device{
     Code* getCodings();
     Gest_Data* getGestures();
     void complete();
+    void three_clear();
 
   private:
     String name;

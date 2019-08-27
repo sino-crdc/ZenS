@@ -80,7 +80,7 @@ void Device::complete() {
         union xx {              //用于读取文件中的数据；
           unsigned int num = 0;
           byte buf[2];
-        }code;
+        } code;
         unsigned int * int_coding_o = new unsigned int[243];
         int len = 0;
         for (int j = 0; j < 243; j++)
@@ -88,14 +88,14 @@ void Device::complete() {
         while (this->infos.available()) {
           code.buf[1] = this->infos.read();
           code.buf[0] = this->infos.peek();
-//          Serial.print((char)code.buf[1]);
-//          Serial.print(" ");
-//          Serial.print((char)code.buf[0]);
-//          Serial.print(" ");
-//          Serial.print(String(((code.buf[1]<<8)|code.buf[0])));
-//          Serial.print(" ");
+          //          Serial.print((char)code.buf[1]);
+          //          Serial.print(" ");
+          //          Serial.print((char)code.buf[0]);
+          //          Serial.print(" ");
+          //          Serial.print(String(((code.buf[1]<<8)|code.buf[0])));
+          //          Serial.print(" ");
           if (code.buf[0] != 0xFF && code.buf[1] != 0xFF)
-            this->infos.read(), int_coding_o[len++] = ((code.buf[1]<<8)|code.buf[0]);
+            this->infos.read(), int_coding_o[len++] = ((code.buf[1] << 8) | code.buf[0]);
           else
             break;
           //          Serial.print(int_coding_o[len-1]),Serial.print(" ");
@@ -129,4 +129,14 @@ void Device::complete() {
     this->infos.close();
     Serial.println("Device::complete finish");
   }
+}
+
+void Device::three_clear() {
+  delete [] this->orderTypes;
+  delete [] this->codings;
+  delete [] this->gestures;
+
+  this->orderTypes = NULL;
+  this->codings = NULL;
+  this->gestures = NULL;
 }
