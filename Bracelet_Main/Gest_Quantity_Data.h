@@ -1,4 +1,4 @@
-d#ifndef Gest_Quantity_Data_H
+#ifndef Gest_Quantity_Data_H
 #define Gest_Quantity_Data_H
 #if defined(ARDUINO)&&ARDUINO>=100
   #include "Arduino.h"
