@@ -8,9 +8,9 @@
 
 #include "Gesture.h"
 
-#define DAXTHRESHOLD 2//x轴加速度可标志临界变化量
-#define DAYTHRESHOLD 2//y轴加速度可标志临界变化量
-#define DAZTHRESHOLD 2//z轴加速度可标志临界变化量
+#define DAXTHRESHOLD 1//x轴加速度可标志临界变化量
+#define DAYTHRESHOLD 1//y轴加速度可标志临界变化量
+#define DAZTHRESHOLD 1//z轴加速度可标志临界变化量
 #define ABSOLU_XA0 1//x轴绝对初始加速度
 #define ABSOLU_YA0 -1//y轴绝对初始加速度
 #define ABSOLU_ZA0 1//z轴绝对初始加速度
@@ -26,6 +26,8 @@ static bool first = true;//用于定性检测函数，是否是第一次传回�
 static bool qfirst = true;
 static bool cfirst = true;//用于初次校准
 static float a[3], w[3], angle[3];
+byte f[6] = {0};
+char c[15];
 
 Gesture::Gesture(Device *device) {
   Serial.println("gesture constructing...");
@@ -416,8 +418,6 @@ void Gesture::serialEvent() {
 
 void Gesture::simplify(String *s) {
   int len = s->length();
-  int *f = (int *) malloc(6 * sizeof(int));
-  char *c = (char *) malloc(len * sizeof(char));
   for (int i = 0; i < 6; i++)
     f[i] = 0;
   for (int i = 0; i < len; i++) {
@@ -436,8 +436,6 @@ void Gesture::simplify(String *s) {
     if (c[i])
       (*s) += c[i];
   }
-  free(f);
-  free(c);
 }
 
 /**

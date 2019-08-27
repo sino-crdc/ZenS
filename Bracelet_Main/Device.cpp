@@ -61,14 +61,16 @@ void Device::complete(){
       this->codings = new Code[num];
       this->gestures = new Gest_Data[num];
       for(int i = 0;this->infos.available() && i<orderNum;i++){
-        
+        Serial.println("for "+String(i))
         //获取第i个orderType
         String data = "";
+        Serial.println(this->infos.peek(), HEX);
         while(char(this->infos.peek()) != 0xFF){
           data += char(this->infos.read());
         }
         this->orderTypes[i] = data;
         this->infos.read();//丢弃0xFF
+        Serial.println(this->orderTypes[i]);
 
         //获取第i个coding
         char* by_coding = new char[972];
@@ -86,7 +88,7 @@ void Device::complete(){
         this->codings[i].hz = 38;
         delete [] by_coding;
         this->infos.read();
-         
+        Serial.println(this->codings[i].len);
         //获取第i个gesture
         String temp = "";
         while(char(this->infos.peek()) != '\r'){
@@ -96,6 +98,7 @@ void Device::complete(){
         this->gestures[i].device = this;
         this->infos.read();//抛弃\r
         this->infos.read();//抛弃\n
+        Serial.println(this->gestures[i].equation);
       }
     }
     this->infos.close();
