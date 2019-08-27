@@ -158,8 +158,8 @@ Gest_Data *Gesture::detect() {
   first = true;
 //  cfirst = true;
 
-  static Gest_Data t_gest = Gest_Data("z+", this->device);
-  t_gest = Gest_Data("z+", this->device);//tododuan
+  static Gest_Data t_gest = Gest_Data(equation, this->device);
+  t_gest = Gest_Data(equation, this->device);//tododuan
   setGest_data(&t_gest);
   Serial.println("get gestdata: as above.");
   return this->gest_data;
@@ -316,6 +316,7 @@ void Gesture::quantity_detect(Order *order) {
         float deviation = angle[QUANTITY_AXE - 120] - angle0;
         deviation = deviation < -10.0 ? 180.0 + deviation + angle0 : deviation;
         //发送角度
+        Serial.println(deviation);
         Gest_Quantity_Data temp_qgest = Gest_Quantity_Data(deviation, order, this->device);
         controler.send(this->quantity_analyze(&temp_qgest));
         //                Serial.println("get_gest_quantity_order: as above.");
@@ -346,9 +347,9 @@ Order *Gesture::quantity_analyze(Gest_Quantity_Data *gest_quantity_data) {
   int pos = 0;//计位器
   Serial.println("quantitative type corresponding...");
   for (; pos < gest_quantity_data->device->getOrderNum(); pos++) {
-//    Serial.println(orderTypes[pos]);
-//    Serial.println(gest_quantity_data->order->getOrderType());
-//    Serial.println(orderTypes[pos].compareTo(gest_quantity_data->order->getOrderType()));
+    Serial.println(orderTypes[pos]);
+    Serial.println(gest_quantity_data->order->getOrderType());
+    Serial.println(orderTypes[pos].compareTo(gest_quantity_data->order->getOrderType()));
     if (orderTypes[pos].equals(gest_quantity_data->order->getOrderType())) {
       Serial.println("quantitative type corresponded.");
       break;
