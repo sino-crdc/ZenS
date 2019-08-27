@@ -54,12 +54,12 @@ void Order::setCode()
 
           //获取第i个orderType
           String data = "";
-          while (char(file.peek()) != '#') {
+          while (char(file.peek()) != 0xFF) {
             data += char(file.read());
           }
           //比对orderType
           if (data.equals(this->orderType)) { //如果匹配成功，加载code并退出
-            file.read();//丢弃'#'
+            file.read();//丢弃0xFF
             union xx code;
             unsigned int * int_coding_o = new unsigned int[243];
             int len=0; 
@@ -68,7 +68,7 @@ void Order::setCode()
             while(file.available()){
                 code.buf[1]=file.read();
                 code.buf[0]=file.read();
-                if(code.buf[0]=='#'||code.buf[1]=='#')
+                if(code.buf[0]==0xFF||code.buf[1]==0xFF)
                   break;
                 else
                   int_coding_o[len++]=code.num;
