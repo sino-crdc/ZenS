@@ -10,26 +10,26 @@ Device::Device(String name, File infos,int orderNum){
   this->name = name;
   this->infos = infos;
   this->orderNum = orderNum;
-  Serial.println("device constructed.");
+  //Serial.println("device constructed.");
 }
 
 String Device::getName(){
-  Serial.println("Device::getname");
+//  Serial.println("Device::getname");
   return this->name;
 }
 
 File Device::getInfos(){
-  Serial.println("Device::getInfos");
+//  Serial.println("Device::getInfos");
   return this->infos;
 }
 
 int Device::getOrderNum(){
-  Serial.println("Device::getOrderNum");
+//  Serial.println("Device::getOrderNum");
   return this->orderNum;
 }
 
 String* Device::getOrderTypes(){
-  Serial.println("Device::getOrderTypes");
+//  Serial.println("Device::getOrderTypes");
   if(this->orderTypes == NULL){
     complete();
   }
@@ -37,7 +37,7 @@ String* Device::getOrderTypes(){
 }
 
 Code* Device::getCodings(){
-  Serial.println("Device::getCodings");
+//  Serial.println("Device::getCodings");
   if(this->codings == NULL){
     complete();
   }
@@ -45,7 +45,7 @@ Code* Device::getCodings(){
 }
 
 Gest_Data* Device::getGestures(){
-  Serial.println("Device::getGestures");
+//  Serial.println("Device::getGestures");
   if(this->gestures == NULL){
     complete();
   }
@@ -64,15 +64,15 @@ void Device::complete(){
         
         //获取第i个orderType
         String data = "";
-        while(char(this->infos.peek()) != '#'){
+        while(char(this->infos.peek()) != 0xFF){
           data += char(this->infos.read());
         }
         this->orderTypes[i] = data;
-        this->infos.read();//丢弃'#'
+        this->infos.read();//丢弃0xFF
 
         //获取第i个coding
         char* by_coding = new char[972];
-        for(int j = 0;char(this->infos.peek()) != '#';j++){
+        for(int j = 0;char(this->infos.peek()) != 0xFF;j++){
           by_coding[j] = char(this->infos.read());
         }
 

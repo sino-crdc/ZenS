@@ -1,4 +1,4 @@
-#include <IRremote.h>
+#include <IRremote2.h>
 #include <SPI.h>
 #include <SD.h>//引入
 
@@ -9,7 +9,7 @@
 
 File myFile;
 
-int RECV_PIN = 7;  
+int RECV_PIN = 3;  
 
 IRrecv irrecv(RECV_PIN);
 
@@ -22,7 +22,7 @@ union xx{
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(4800);
   // Open serial communications and wait for port to open:
   // to the user what's going on.
   Serial.println("Enabling IRin");
@@ -30,7 +30,7 @@ void setup()
   Serial.println("Enabled IRin");//设置好红外接收器
   Serial.print("Initializing SD card...");
   pinMode(53,OUTPUT);
-  if (!SD.begin(47)) {
+  if (!SD.begin(4)) {
     Serial.println("initialization failed!");
     while (1);
   }
@@ -64,7 +64,8 @@ void loop() {
 
 void dump(decode_results * results)
 {
-  myFile.print("switch#");
+  myFile.print("switch");
+  myFile.write(0xFF);
   int t = results->rawlen;
   Serial.print(t-1);
   Serial.print(':');
@@ -75,6 +76,7 @@ void dump(decode_results * results)
       Serial.print(code.num,DEC);
       if(i<t-1) Serial.print(',');
     }
-  myFile.print("#y+y-");
+  myFile.write(0xFF);
+  myFile.print("y+y-");
   Serial.println();
 }
