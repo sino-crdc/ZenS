@@ -55,12 +55,12 @@ Gest_Data* Device::getGestures(){
 void Device::complete(){
   Serial.println("Device::complete");
   if(SD.begin(SD_PIN)){
-    if(SD.open(this->infos.name(),FILE_READ)){
+    if(this->infos = SD.open(this->infos.name(),FILE_READ)){
       const int num = this->orderNum;
       this->orderTypes = new String[num];
       this->codings = new Code[num];
       this->gestures = new Gest_Data[num];
-      for(int i = 0;this->infos.available() && i<orderNum;i++){
+      for(int i = 0;this->infos.available() && i<num;i++){
         Serial.println("for "+String(i))
         //获取第i个orderType
         String data = "";
