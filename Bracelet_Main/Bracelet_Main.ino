@@ -14,7 +14,7 @@
 
 Controler controler;
 
-Device light = Device("Light", File(SdFile(), "Light.txt"), LIGHT_ORDER_NUM);
+Device light = Device("Light", File(SdFile(), "light.txt"), LIGHT_ORDER_NUM);
 Device air_conditioner = Device("AC", File(SdFile(), "AC.txt"), AC_ORDER_NUM);
 Device television = Device("Tele", File(SdFile(), "Tele.txt"), TELE_ORDER_NUM);
 Device curtain = Device("Curtain", File(SdFile(), "Curtain.txt"), CURTAIN_ORDER_NUM);

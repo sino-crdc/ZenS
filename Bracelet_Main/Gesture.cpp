@@ -134,7 +134,7 @@ Gest_Data *Gesture::detect() {
         za0 = a[2];
         first = false;
         //                delay(4);
-        Serial.println("xa0:" + String(xa0) + " ya0:" + String(ya0) + " za0:" + String(za0));
+        //Serial.println("xa0:" + String(xa0) + " ya0:" + String(ya0) + " za0:" + String(za0));
       } else {
         //转换数据信号为手势表达式元素
         String t = "";
@@ -142,12 +142,12 @@ Gest_Data *Gesture::detect() {
           case 1: t = "x+";break;
           case 2: t = "y+";break;
           case 3: t = "z+";break;
-          case -1: t = "x-";break;
-          case -2: t = "y-";break;
-          case -3: t = "z-";break;
+          case 4: t = "x-";break;
+          case 5: t = "y-";break;
+          case 6: t = "z-";break;
           case 0: t = "";
          }
-        Serial.println("xa:" + String(a[0]) + " ya:" + String(a[1]) + " za:" + String(a[2]));
+        //Serial.println("xa:" + String(a[0]) + " ya:" + String(a[1]) + " za:" + String(a[2]));
         equation += t;
         simplify(&equation);
         //Serial.println("gesture recorded: " + equation);
@@ -158,8 +158,8 @@ Gest_Data *Gesture::detect() {
   first = true;
 //  cfirst = true;
 
-  static Gest_Data t_gest = Gest_Data(equation, this->device);
-  t_gest = Gest_Data(equation, this->device);//tododuan
+  static Gest_Data t_gest = Gest_Data("z+", this->device);
+  t_gest = Gest_Data("z+", this->device);//tododuan
   setGest_data(&t_gest);
   Serial.println("get gestdata: as above.");
   return this->gest_data;
@@ -314,7 +314,7 @@ void Gesture::quantity_detect(Order *order) {
         //计算角度偏离量
         //                Serial.println("angle deviation calculating...");
         float deviation = angle[QUANTITY_AXE - 120] - angle0;
-        deviation = deviation < -10.0 ? 180.0 + deviation : deviation;
+        deviation = deviation < -10.0 ? 180.0 + deviation + angle0 : deviation;
         //发送角度
         Gest_Quantity_Data temp_qgest = Gest_Quantity_Data(deviation, order, this->device);
         controler.send(this->quantity_analyze(&temp_qgest));
@@ -346,6 +346,9 @@ Order *Gesture::quantity_analyze(Gest_Quantity_Data *gest_quantity_data) {
   int pos = 0;//计位器
   Serial.println("quantitative type corresponding...");
   for (; pos < gest_quantity_data->device->getOrderNum(); pos++) {
+//    Serial.println(orderTypes[pos]);
+//    Serial.println(gest_quantity_data->order->getOrderType());
+//    Serial.println(orderTypes[pos].compareTo(gest_quantity_data->order->getOrderType()));
     if (orderTypes[pos].equals(gest_quantity_data->order->getOrderType())) {
       Serial.println("quantitative type corresponded.");
       break;
@@ -439,12 +442,12 @@ void Gesture::simplify(String *s) {
 }
 
 /**
-* 返回1/2/3/-1/-2/-3分别对应x+/y+/z+/x-/y-/z-, 返回0为全阴性或者无法判断
+* 返回1/2/3/4/5/6分别对应x+/y+/z+/x-/y-/z-, 返回0为全阴性或者无法判断
 */
 byte Gesture::pos_axe(float xa0, float ya0, float za0){
-  adx = abs(a[0]-xa0);
-  ady = abs(a[1]-ya0);
-  adz = abs(a[2]-za0);
+  float adx = abs(a[0]-xa0);
+  float ady = abs(a[1]-ya0);
+  float adz = abs(a[2]-za0);
 
   // 三轴变化都小于阈值，没有阳性轴
   if(adx < DAXTHRESHOLD && ady < DAYTHRESHOLD && adz < DAZTHRESHOLD){
@@ -452,48 +455,48 @@ byte Gesture::pos_axe(float xa0, float ya0, float za0){
   }
   //有且只有一轴变化大等于阈值，直接返回该轴
   else if (adx < DAXTHRESHOLD && ady < DAYTHRESHOLD){
-      return a[2]-za0 > 0 ? 3 : -3;
+      return a[2]-za0 > 0 ? 3 : 6;
   }else if (ady < DAYTHRESHOLD && adz < DAZTHRESHOLD){
-      return a[0]-xa0 > 0 ? 1 : -1;
+      return a[0]-xa0 > 0 ? 1 : 4;
   }else if(adx < DAXTHRESHOLD && adz < DAZTHRESHOLD){
-      return a[1]-ya0 > 0 ? 2 : -2;
+      return a[1]-ya0 > 0 ? 2 : 5;
   }
   //有且只有两轴变化大等于阈值，做出判断
   else if (adx < DAXTHRESHOLD){
       if(ady > adz){
-        return a[1]-ya0 > 0 ? 2 : -2;
+        return a[1]-ya0 > 0 ? 2 : 5;
       }else if(ady < adz){
-        return a[2]-za0 > 0 ? 3 : -3;
+        return a[2]-za0 > 0 ? 3 : 6;
       }else{
         return 0;
       }
   }else if (ady < DAYTHRESHOLD){
     if(adx > adz){
-      return a[0]-xa0 > 0 ? 1 : -1;
+      return a[0]-xa0 > 0 ? 1 : 4;
     }else if(adx < adz){
-      return a[2]-za0 > 0 ? 3 : -3;
+      return a[2]-za0 > 0 ? 3 : 6;
     }else{
       return 0;
     }
   }else if (adz < DAZTHRESHOLD){
     if(adx > ady){
-      return a[0]-xa0 > 0 ? 1 : -1;
+      return a[0]-xa0 > 0 ? 1 : 4;
     }else if(adx < ady){
-      return a[1]-ya0 > 0 ? 2 : -2;
+      return a[1]-ya0 > 0 ? 2 : 5;
     }else{
       return 0;
     }
-  }
+
   //全部轴变化大等于阈值，做出判断
-  else{
+  }else{
     if(adx == ady && ady == adz){//如果三个值相等
       return 0;
     }else if(adx > ady && adx > adz){
-      return a[0]-xa0 > 0 ? 1 : -1;
+      return a[0]-xa0 > 0 ? 1 : 4;
     }else if(ady > adx && ady > adz){
-      return a[1]-ya0 > 0 ? 2 : -2;
+      return a[1]-ya0 > 0 ? 2 : 5;
     }else if (adz > adx && adz > ady){
-      return a[2]-za0 > 0 ? 3 : -3;
+      return a[2]-za0 > 0 ? 3 : 6;
     }else{
       return 0;
     }
