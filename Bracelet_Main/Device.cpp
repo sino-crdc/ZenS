@@ -10,6 +10,7 @@ Device::Device(String name, File infos,int orderNum){
   this->name = name;
   this->infos = infos;
   this->orderNum = orderNum;
+  //Serial.println("device constructed.");
 }
 
 String Device::getName(){
@@ -63,15 +64,15 @@ void Device::complete(){
         
         //获取第i个orderType
         String data = "";
-        while(char(this->infos.peek()) != '#'){
+        while(char(this->infos.peek()) != 0xFF){
           data += char(this->infos.read());
         }
         this->orderTypes[i] = data;
-        this->infos.read();//丢弃'#'
+        this->infos.read();//丢弃0xFF
 
         //获取第i个coding
         char* by_coding = new char[972];
-        for(int j = 0;char(this->infos.peek()) != '#';j++){
+        for(int j = 0;char(this->infos.peek()) != 0xFF;j++){
           by_coding[j] = char(this->infos.read());
         }
 

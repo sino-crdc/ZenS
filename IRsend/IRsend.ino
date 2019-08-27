@@ -18,13 +18,13 @@ union xx{
 void setup()
 {
   pinMode(53,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(4800);
   if(!SD.begin(4)){
       Serial.println("SD initialization failed!");
       while(1);
     }
   Serial.println("SD initialization done");
-  myFile=SD.open("ac.txt",FILE_READ);
+  myFile=SD.open("light.txt",FILE_READ);
   for(int i=0;i<7;i++)
     myFile.read();
   if(myFile){
@@ -36,7 +36,7 @@ void setup()
           Serial.print(" ");
           Serial.print((char)code.buf[0]);
           Serial.print(" ");
-          if(code.buf[1]!='#'&&code.buf[0]!='#')
+          if(code.buf[1]!=0xFF&&code.buf[0]!=0xFF)
             a[len++]=code.num;
           else
             break;

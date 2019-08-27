@@ -1,15 +1,15 @@
-#include <IRremote.h>
+#include <IRremote2.h>
 #include <SPI.h>
 #include <SD.h>//引入
 
-#define SD_PIN 10//mega: 53
-#define MOSI 11//51
-#define MISO 12//50
-#define SCK 13//52
+
+#define MOSI 11//mega:51
+#define MISO 12//mega:50
+#define SCK 13//mega:52
 
 File myFile;
 
-int RECV_PIN = 7;  
+int RECV_PIN = 3;  
 
 IRrecv irrecv(RECV_PIN);
 
@@ -22,7 +22,7 @@ union xx{
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(4800);
   // Open serial communications and wait for port to open:
   // to the user what's going on.
   Serial.println("Enabling IRin");
@@ -30,21 +30,21 @@ void setup()
   Serial.println("Enabled IRin");//设置好红外接收器
   Serial.print("Initializing SD card...");
   pinMode(53,OUTPUT);
-  if (!SD.begin(47)) {
+  if (!SD.begin(4)) {
     Serial.println("initialization failed!");
     while (1);
   }
   Serial.println("Creating my documents...");
-  if(SD.exists("ac.txt"))
-    SD.remove("ac.txt");
-  myFile=SD.open("acc.txt",FILE_WRITE);
+  if(SD.exists("light.txt"))
+    SD.remove("light.txt");
+  myFile=SD.open("light.txt",FILE_WRITE);
   Serial.println("my_documents is created");
-  Serial.println(SD.exists("acc.txt"));
+  Serial.println(SD.exists("light.txt"));
   myFile.close();
 }
 
 void loop() {
-  myFile=SD.open("ac.txt",FILE_WRITE);
+  myFile=SD.open("light.txt",FILE_WRITE);
   if(myFile){
       if (irrecv.decode(&results)) {
            Serial.println("Received a code, saving as raw");
@@ -54,9 +54,9 @@ void loop() {
       delay(1000);
       }
    myFile.close();
-   myFile=SD.open("ac.txt",FILE_READ);      
+   myFile=SD.open("light.txt",FILE_READ);      
    while(myFile.available()){
-    Serial.print(myFile.read(),HEX),Serial.print(" ");
+    Serial.print(myFile.read(),DEC),Serial.print(" ");
    }
    Serial.println();
    myFile.close();
@@ -64,7 +64,8 @@ void loop() {
 
 void dump(decode_results * results)
 {
-  myFile.print("switch#");
+  myFile.print("switch");
+  myFile.write(0xFF);
   int t = results->rawlen;
   Serial.print(t-1);
   Serial.print(':');
@@ -72,9 +73,10 @@ void dump(decode_results * results)
       code.num=results->rawbuf[i]*USECPERTICK;
       for(int j=0;j<2;j++)
         myFile.write(code.buf[1-j]);
-      Serial.print(code.num,HEX);
+      Serial.print(code.num,DEC);
       if(i<t-1) Serial.print(',');
     }
-  myFile.print("#x-y-z-");
+  myFile.write(0xFF);
+  myFile.print("y+y-");
   Serial.println();
 }

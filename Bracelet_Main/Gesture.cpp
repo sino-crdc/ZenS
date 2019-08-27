@@ -8,9 +8,9 @@
 
 #include "Gesture.h"
 
-#define DAXTHRESHOLD 0.5//x轴加速度可标志临界变化量
-#define DAYTHRESHOLD 0.5//y轴加速度可标志临界变化量
-#define DAZTHRESHOLD 0.5//z轴加速度可标志临界变化量
+#define DAXTHRESHOLD 2//x轴加速度可标志临界变化量
+#define DAYTHRESHOLD 2//y轴加速度可标志临界变化量
+#define DAZTHRESHOLD 2//z轴加速度可标志临界变化量
 #define ABSOLU_XA0 1//x轴绝对初始加速度
 #define ABSOLU_YA0 -1//y轴绝对初始加速度
 #define ABSOLU_ZA0 1//z轴绝对初始加速度
@@ -108,19 +108,20 @@ Gest_Data *Gesture::detect() {
       //      cfirst = false;
             //delay(2000);
       //    }
+
     //获取数据
     serialEvent();
     if (sign) { //若收到数据信号
-      Serial.println("get sign.");
+      //Serial.println("get sign.");
       sign = 0;
       //解析数据信号
       if (Re_buf[0] == 0x55 && Re_buf[1] == 0x51) { //检查帧头，识别到加速度包
-        Serial.println("acceleration package gotten.");
+        //Serial.println("acceleration package gotten.");
         a[0] = (short(Re_buf[3] << 8 | Re_buf[2])) / 32768.0 * 16;//x
         a[1] = (short(Re_buf[5] << 8 | Re_buf[4])) / 32768.0 * 16;//y
         a[2] = (short(Re_buf[7] << 8 | Re_buf[6])) / 32768.0 * 16;//z
       } else {
-        Serial.println("acceleration package not gotten");
+        //Serial.println("acceleration package not gotten");
         continue;
       }
 
@@ -147,7 +148,7 @@ Gest_Data *Gesture::detect() {
         Serial.println("xa:" + String(a[0]) + " ya:" + String(a[1]) + " za:" + String(a[2]));
         equation += t;
         simplify(&equation);
-        Serial.println("gesture recorded: " + equation);
+        //Serial.println("gesture recorded: " + equation);
       }
     }
   }
@@ -179,16 +180,16 @@ Order *Gesture::analyze(Gest_Data *gest_data) {
         String data_gesture = "";
         String data_order = "";
         //加载首个orderType
-        while (file.peek() != byte('#') && file.available()) {
+        while (file.peek() != byte(0xFF) && file.available()) {
           data_order += char(file.read());
         }
         //进入循环，不断检测
         for (int i = 0, j = 0; file.available();) { //i是对于#的一个counter,j是对于\n的一个counter
-          //检测'#'
-          if (file.read() == byte('#')) {
+          //检测0xFF
+          if (file.read() == byte(0xFF)) {
             i++;
           }
-          //每两个'#'
+          //每两个0xFF
           if (i % 2 == 0) {
             //加载gesture.equation
             while (file.peek() != byte('\r') && file.available()) {
@@ -231,7 +232,7 @@ Order *Gesture::analyze(Gest_Data *gest_data) {
             data_order = "";
             data_gesture = "";
             //加载orderType
-            while (file.peek() != byte('#') && file.available()) {
+            while (file.peek() != byte(0xFF) && file.available()) {
               data_order += char(file.read());
             }
           }

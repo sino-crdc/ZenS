@@ -132,7 +132,7 @@ byte Controler::detect() {
     setButtonB(false);
     digitalWrite(LEDB_PIN, LOW);
   }
-    
+
   if (digitalRead(BUTTONC_PIN) == HIGH) {
     setButtonC(true);
     digitalWrite(LEDC_PIN, HIGH);
@@ -143,8 +143,8 @@ byte Controler::detect() {
     setButtonC(false);
     digitalWrite(LEDC_PIN, LOW);
   }
-    
-    
+
+
   if (digitalRead(BUTTOND_PIN) == HIGH) {
     setButtonD(true);
     digitalWrite(LEDD_PIN, HIGH);
@@ -155,6 +155,6 @@ byte Controler::detect() {
     setButtonD(false);
     digitalWrite(LEDD_PIN, LOW);
   }
-    
+
   return 0;
 }
