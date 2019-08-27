@@ -31,13 +31,13 @@ void setup()
       a=(unsigned int *)malloc(243*sizeof(unsigned int));
       while(myFile.available()){
           code.buf[1]=myFile.read();
-          code.buf[0]=myFile.read();
+          code.buf[0]=myFile.peek();
           Serial.print((char)code.buf[1]);
           Serial.print(" ");
           Serial.print((char)code.buf[0]);
           Serial.print(" ");
           if(code.buf[1]!=0xFF&&code.buf[0]!=0xFF)
-            a[len++]=code.num;
+            myFile.read(),a[len++]=code.num;
           else
             break;
         }

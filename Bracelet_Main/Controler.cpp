@@ -82,7 +82,10 @@ void Controler::send(Order* order)
   if (order != NULL) {
     Serial.print("order sent: ");
     Serial.println("device^"+order->getDevice()->getName() + " ordertype^"+order->getOrderType());
+    //Serial.println(order->getCode().buf[0],DEC);
+    //Serial.println(order->getCode().hz);
     irsend.sendRaw(order->getCode().buf, order->getCode().len, order->getCode().hz);//可能需要加上循环连环发射密集轰炸
+    //delay(2000);
   } else {
     Serial.println("order == NULL");
   }
