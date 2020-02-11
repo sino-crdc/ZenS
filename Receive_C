@@ -1,0 +1,67 @@
+//
+// Created by Marc-Antoine on 2020/2/11.
+//
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/shm.h>
+#include "shmdata.h"
+#include <string.h>
+
+int main()
+{
+    int id = 0;//共享内存标识符
+    char *data = NULL;//共享内存地址
+    int status = 1;//程序运行状态
+    struct shared_data *shared;//用于存储待传输数据
+
+    //创建共享内存
+    id = shmget((key_t)1234, 20, 0666|IPC_CREAT);
+    if(id == -1){
+        fprintf(stderr, "Shmget failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //将共享内存连接到当前进程的地址空间
+    data = shmat(id, 0, 0);
+    if(data == NULL){
+        fprintf(stderr, "shmat failed\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("\nMemory attached at %X\n", (int)data);
+
+    //动手！！
+    shared = (struct shared_data*)data;
+    shared->written = 0;//先初始化为0
+    while(status)
+    {
+        if(shared->written != 0)//发送端写好数据了
+        {
+            printf("You wrote: %s", shared->text);
+            shared->written = 0;//written重新归零，让shared可写
+
+            if(strncmp(shared->text, "end", 3) == 0)//如果侦测到end则退出循环
+                status = 0;
+        }
+
+        else//有其他进程在写数据，不能读取数据，这里sleep可以删掉节省时间
+            sleep(1);
+    }
+
+    //把共享内存从当前进程中分离
+    if(shmdt(data) == -1)
+    {
+        fprintf(stderr, "shmdt failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //删除共享内存
+    if(shmctl(id, IPC_RMID, 0) == -1)
+    {
+        fprintf(stderr, "shmctl(IPC_RMID) failed\n");
+        exit(EXIT_FAILURE);
+    }
+    exit(EXIT_SUCCESS);
+}
+
