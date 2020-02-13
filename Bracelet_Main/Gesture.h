@@ -13,7 +13,6 @@
 #include "Order.h"
 #include "Controler.h"
 #include <math.h>
-#include <SoftwareSerial.h>
 
 class Gesture{
  public:
@@ -23,14 +22,17 @@ class Gesture{
     Gest_Data* getGest_data();
     Gest_Data* detect();
     Order* analyze(Gest_Data* gest_data);
-    Gest_Quantity_Data* quantity_detect(Order* order);
+    void quantity_detect(Order* order);
     Order* quantity_analyze(Gest_Quantity_Data* gest_quantity_data);
 
   private:
     Device* device;
     Gest_Data* gest_data = NULL;
     
-    void serialEvent(); 
+    void serialEvent();
+    void simplify(String *s);
+    byte pos_axe(float, float, float);
+    
 };
 
 #endif

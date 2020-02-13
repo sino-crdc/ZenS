@@ -12,6 +12,9 @@
 class Order {
   public:
     Order(Device* device, String orderType);
+    ~Order(){
+      //todo 清理coding
+    }
     void setDevice(Device* device);
     void setOrderType(String orderType);
     void setCode();
@@ -26,5 +29,7 @@ class Order {
     String orderType;
     Code coding;
     bool isQuantity;
+
+    
 };
 #endif
