@@ -15,7 +15,7 @@
 #define TRUE 1
 #define FALSE 0
 
-int analysis(char *buff);
+int show_char(char *buff);
 int OpenDev(char *Dev);
 void set_speed(int fd, int speed);
 int set_Parity(int fd,int databits,int stopbits,int parity);
@@ -132,18 +132,18 @@ int set_Parity(int fd,int databits,int stopbits,int parity)
     return (TRUE);
 }
 
-int analysis (char *buff)
+int show_char (char *buff)
 {
     for (int j = 0; j < 3; ++j) {
 
         printf("%c", buff[j]);
     }
     return 0;
-
 }
-int show_char(const int a[]){
+
+int analysis_start(const int *ax, const int *ay, const int *az){
     static int flag_s = 0;
-    if(a[0]>TRIGGER_A||a[1]>TRIGGER_A||a[2]>TRIGGER_A)
+    if(*ax>TRIGGER_A||*ay>TRIGGER_A||*az>TRIGGER_A)
         flag_s += 1;
     if (flag_s >= TRIGGER_FLAG){
         flag_s = 0;
@@ -152,9 +152,10 @@ int show_char(const int a[]){
 
     return 0;
 }
-int analysis_end(const int a[]){
+
+int analysis_end(const int *ax, const int *ay, const int *az){
     static int flag_e = 0;
-    if(a[0]<TRIGGER_A||a[1]<TRIGGER_A||a[2]<TRIGGER_A)
+    if(*ax<TRIGGER_A||*ay<TRIGGER_A||*az<TRIGGER_A)
         flag_e += 1;
     if (flag_e >= TRIGGER_FLAG){
         flag_e = 0;
@@ -164,19 +165,19 @@ int analysis_end(const int a[]){
     return 0;
 }
 
-void analysis_result(int a[][8], int b[][8], const int n){
-    if(n<=150){
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                b[i][j] = a[i][j];
+void analysis_result(int ** all_data, int **processed_data, const int data_num){
+    if(data_num<=150){
+        for (int i = 0; i < data_num; ++i) {
+            for (int j = 0; j < 6; ++j) {
+                processed_data[i][j] = all_data[i][j];
             }
         }
     }
     else{
-        int q = n/150;
-        for (int i = 0; i < n; ++i) {
+        int q = data_num/150;
+        for (int i = 0; i < data_num; ++i) {
             for (int j = 0; j < 8; ++j) {
-                b[i*q][j] = a[i*q][j];
+                processed_data[i*q][j] = all_data[i*q][j];
             }
         }
     }
