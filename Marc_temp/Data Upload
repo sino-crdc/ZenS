@@ -166,18 +166,18 @@ int analysis_end(const int *ax, const int *ay, const int *az){
 }
 
 void analysis_result(int ** all_data, int **processed_data, const int data_num){
-    if(data_num<=150){
-        for (int i = 0; i < data_num; ++i) {
-            for (int j = 0; j < 6; ++j) {
+    if(data_num<=1256){
+        for (int i = 0; i < 6; ++i) {
+            for (int j = 0; j < data_num; ++j) {
                 processed_data[i][j] = all_data[i][j];
             }
         }
     }
     else{
-        int q = data_num/150;
-        for (int i = 0; i < data_num; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                processed_data[i*q][j] = all_data[i*q][j];
+        int q = data_num/256;
+        for (int i = 0; i < 6; ++i) {
+            for (int j = 0; j < data_num; ++j) {
+                processed_data[i][j*q] = all_data[i][j*q];
             }
         }
     }
